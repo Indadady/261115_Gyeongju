@@ -21,22 +21,18 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config={theme:{extend:{colors:{tm:'#004098'}}}}</script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Nanum+Myeongjo:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <style>
-        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8fafc; color: #1e293b; word-break: keep-all; letter-spacing: -0.01em; }
-        .font-title { font-family: 'Nanum Myeongjo', 'Noto Sans KR', serif; letter-spacing: -0.02em; font-weight: 700; }
-        /* 화면용 섹션 제목 통일: 나눔명조 / 본문·UI는 본고딕 */
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8fafc; color: #1e293b; word-break: keep-all; letter-spacing: -0.015em; }
+        .font-title { font-family: 'Noto Sans KR', sans-serif; letter-spacing: -0.025em; font-weight: 800; }
         #home h1,
-        section > div h2,
-        section > .container h2,
-        section .container > .text-center > h2,
-        section .container > .flex h2,
+        section h2,
         #highlights h3,
         #hotel h3 {
-            font-family: 'Nanum Myeongjo', 'Noto Sans KR', serif;
-            letter-spacing: -0.02em;
-            font-weight: 700;
+            font-family: 'Noto Sans KR', sans-serif;
+            letter-spacing: -0.025em;
+            font-weight: 800;
         }
         .tm-eyebrow {
             font-family: 'Noto Sans KR', sans-serif;
@@ -44,11 +40,6 @@
             font-weight: 800;
             letter-spacing: 0.18em;
             text-transform: uppercase;
-        }
-        /* 인쇄본은 본고딕 고정 */
-        #print-area, #print-area h1, #print-area h2, #print-area h3, #print-area p, #print-area td, #print-area th, #print-area li {
-            font-family: 'Noto Sans KR', sans-serif !important;
-            letter-spacing: normal;
         }
         .hero-bg {
             background: linear-gradient(rgba(3, 18, 42, 0.55), rgba(0, 64, 152, 0.48)), url('assets/images/hero-gyeongju.jpg');
