@@ -1,0 +1,1536 @@
+﻿<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JLH9GD9SVR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-JLH9GD9SVR');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="tm-copyright" content="C-2026-059022">
+    <!-- TM-IP-REG:C-2026-059022 | TourMaker Smart Guidebook | Unauthorized reproduction prohibited -->
+    <title>경주 1박2일 · 가족 여행 (성빈과 함께) - 스마트 가이드북</title>
+    <meta name="description" content="경주 1박2일 가족 여행 스마트 가이드북 · 태백↔포항↔경주 · 체스터톤스 경주 · 첨성대·동궁과월지 야경">
+    <meta property="og:title" content="경주 1박2일 · 가족 여행 (성빈과 함께)">
+    <meta property="og:description" content="2026.11.15~11.16 · 오또상스테끼 · 스페이스워크 · 체스터톤스 · 황리단길 · 첨성대·안압지 야경">
+    <meta property="og:image" content="assets/images/hero-gyeongju.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config={theme:{extend:{colors:{tm:'#004098'}}}}</script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Nanum+Myeongjo:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8fafc; color: #1e293b; word-break: keep-all; }
+        .font-title { font-family: 'Nanum Myeongjo', serif; }
+        .hero-bg {
+            background: linear-gradient(rgba(3, 18, 42, 0.55), rgba(0, 64, 152, 0.48)), url('assets/images/hero-gyeongju.jpg');
+            background-size: cover; background-position: center; background-attachment: fixed;
+        }
+        @media (max-width: 768px){ .hero-bg { background-attachment: scroll; } }
+        #map { height: 500px; width: 100%; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,.1); z-index: 10; }
+        @media (min-width: 768px) { #map { height: 600px; } }
+        @media (max-width: 768px) { #map { height: 440px; } }
+        .custom-icon { background: transparent; border: none; }
+        .map-pin-wrap { display: flex; flex-direction: column; align-items: center; }
+        .map-pin-dot {
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px; color: #fff;
+            border: 2px solid rgba(255,255,255,.95);
+            box-shadow: 0 8px 16px rgba(15,23,42,.18);
+        }
+        .map-pin-label {
+            margin-top: 3px; background: rgba(255,255,255,.96); color: #0f172a;
+            font-size: 10px; font-weight: 800; letter-spacing: -.04em; line-height: 1.2;
+            padding: 2px 6px; border-radius: 6px; white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(15,23,42,.12);
+        }
+        .map-bus { font-size: 22px; line-height: 1; transform-origin: center center; display: inline-block; filter: drop-shadow(0 4px 8px rgba(15,23,42,.35)); }
+        .leaflet-control-zoom { display: none !important; }
+        .map-zoom-btns { position: absolute; left: 12px; bottom: 14px; z-index: 450; display: flex; flex-direction: column; gap: 6px; }
+        .map-zoom-btns button {
+            width: 40px; height: 40px; border-radius: 12px; border: 1px solid #cbd5e1;
+            background: rgba(255,255,255,.96); color: #0f172a; font-size: 18px; font-weight: 800;
+            box-shadow: 0 4px 14px rgba(15,23,42,.12);
+        }
+        .map-zoom-btns button:active { transform: scale(.96); }
+        #map-distance { min-width: 8.5rem; max-width: 13.5rem; }
+        .leaflet-tooltip.custom-map-tooltip {
+            background-color: rgba(255,255,255,.95) !important; border: 1px solid #e2e8f0 !important;
+            border-radius: .75rem !important; box-shadow: 0 10px 15px -3px rgba(0,0,0,.1) !important;
+            font-family: 'Noto Sans KR', sans-serif; padding: 6px 12px; white-space: nowrap;
+        }
+        .leaflet-tooltip-top.custom-map-tooltip::before { border-top-color: rgba(255,255,255,.95) !important; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .animate-fade-in-up { animation: fadeInUp .8s ease-out forwards; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes lockShake { 0%,100% { transform: translateX(0); } 20%,60% { transform: translateX(-6px); } 40%,80% { transform: translateX(6px); } }
+        .shake { animation: lockShake .45s ease-in-out; }
+        body.tm-secure-select { -webkit-user-select: none; user-select: none; }
+        body.tm-secure-select input, body.tm-secure-select textarea { -webkit-user-select: text; user-select: text; }
+        section { scroll-margin-top: 80px; }
+        body.event-day section { scroll-margin-top: 148px; }
+        .schedule-thumb { width: 100%; max-width: 14rem; aspect-ratio: 4/3; object-fit: cover; border-radius: .75rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(15,23,42,.08); }
+        @media screen { #print-area { display: none !important; } }
+        @media print {
+            @page { size: A4 portrait; margin: 10mm 10mm; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            html, body { background: #fff !important; color: #1e293b !important; }
+            header, footer, .print\:hidden, .no-print, #event-day-bar, #toast, #guidebook-lock-modal, #tm-inquiry-modal { display: none !important; }
+            main, body { padding: 0 !important; margin: 0 !important; }
+            #print-area { display: block !important; width: 100%; box-sizing: border-box; }
+            .print-page { display: flex; flex-direction: column; width: 100%; min-height: 277mm; box-sizing: border-box; }
+            .print-page-break { page-break-after: always; break-after: page; }
+            .std-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #004098; padding-bottom: 8px; margin-bottom: 10px; }
+            .std-header img { height: 36px; object-fit: contain; }
+            .std-doc-info { text-align: right; font-size: 11.5px; color: #475569; font-weight: 600; }
+            .std-title { text-align: center; margin-bottom: 8px; }
+            .std-title h1 { font-size: 20px; font-weight: 700; color: #0f172a; margin: 0; letter-spacing: -0.4px; line-height: 1.35; }
+            .std-overview { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; background: #f8fafc !important; border: 1px solid #94a3b8 !important; border-radius: 6px; padding: 8px 14px; margin-bottom: 8px; font-size: 12.5px; }
+            .std-overview div { display: flex; gap: 8px; }
+            .std-overview .label { font-weight: 700; color: #004098; }
+            .std-table { width: 100%; flex: 1 1 auto; border-collapse: collapse; font-size: 12px; table-layout: fixed; border: 2px solid #1e293b !important; margin-bottom: 8px; }
+            .std-table th { border: 1px solid #1e293b !important; background: #f8fafc !important; font-weight: 700; text-align: center; padding: 7px 6px !important; color: #1e293b; font-size: 13px; }
+            .std-table td { border: 1px solid #1e293b !important; padding: 8px 10px !important; vertical-align: top; word-break: keep-all; line-height: 1.48; }
+            .std-table tbody tr { page-break-inside: avoid; break-inside: avoid; }
+            .col-date { width: 14%; text-align: center; font-weight: 700; background: #f8fafc !important; vertical-align: middle; }
+            .col-date .date-sub { display: block; font-size: 11.5px; color: #475569; font-weight: 600; margin-top: 3px; }
+            .col-date .date-city { display: block; margin-top: 6px; font-size: 12px; font-weight: 700; color: #004098; line-height: 1.4; }
+            .col-desc { width: 70%; }
+            .col-meal { width: 16%; text-align: center; vertical-align: middle; }
+            .day-divider td { border-top: 2px solid #1e293b !important; }
+            .time-flow { margin-bottom: 4px; font-weight: 500; }
+            .time-tag { display: inline-block; color: #004098; font-weight: 700; margin-right: 5px; }
+            .highlight { font-weight: 700; color: #0f172a; }
+            .desc-list { list-style: none; margin: 4px 0 0 !important; padding-left: 5px; }
+            .desc-list li { position: relative; padding-left: 14px; margin-bottom: 4px !important; line-height: 1.45; }
+            .desc-list li:last-child { margin-bottom: 0 !important; }
+            .desc-list li::before { content: '■'; font-size: 8px; position: absolute; left: 0; top: 4px; color: #004098; }
+            .desc-note { display: block; font-size: 11px; color: #475569; font-weight: 500; line-height: 1.4; margin-top: 1px; }
+            .hotel-divider { border: 0; border-top: 1px dashed #94a3b8; margin: 7px 0 6px 0; }
+            .hotel-info { font-size: 12.5px; color: #0f172a; }
+            .meal-wrapper { display: flex; flex-direction: column; gap: 8px; justify-content: center; height: 100%; text-align: left; padding-left: 4px; }
+            .meal-simple { display: flex; align-items: flex-start; font-size: 12.5px; color: #1e293b; line-height: 1.4; }
+            .meal-simple strong { color: #004098; margin-right: 4px; width: 22px; flex-shrink: 0; }
+            .remarks { font-size: 11.5px; color: #64748b; text-align: right; font-weight: 500; margin: 0 0 6px; }
+            .footer-box { margin-top: auto; padding-top: 10px; display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; border-top: 1px solid #e2e8f0; }
+            .brand-link { font-size: 11.5px; color: #6c757d; text-decoration: none; }
+            .manager-info { text-align: right; border-left: 3px solid #004098; padding-left: 12px; }
+            .manager-info .names { color: #0f172a; font-weight: 700; font-size: 13.5px; }
+            .print-section-title { font-size: 14px; font-weight: 800; color: #004098; margin: 0 0 8px; border-left: 4px solid #004098; padding-left: 8px; }
+            .print-check-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 12px; margin: 2px 0 10px; }
+            .print-check-item { display: flex; align-items: center; gap: 8px; font-size: 12px; line-height: 1.35; border: 1px solid #94a3b8; border-radius: 6px; padding: 8px 12px; background: #fff !important; word-break: keep-all; }
+            .print-check-box { width: 14px; height: 14px; border: 1.5px solid #004098; border-radius: 3px; flex-shrink: 0; }
+            .print-seat-box { border: 1px solid #1e293b; border-radius: 8px; padding: 9px 12px; margin-bottom: 10px; background: #f8fafc !important; page-break-inside: avoid; }
+            .print-seat-box h3 { font-size: 12.5px; font-weight: 800; color: #004098; margin: 0 0 5px; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; }
+            .print-seat-box ul { list-style: none; margin: 0; padding: 0; }
+            .print-seat-box li { position: relative; padding-left: 11px; font-size: 11px; line-height: 1.42; color: #1e293b; margin-bottom: 3px; word-break: keep-all; }
+            .print-seat-box li:last-child { margin-bottom: 0; }
+            .print-seat-box li::before { content: '■'; font-size: 7px; position: absolute; left: 0; top: 4px; color: #004098; }
+            .print-qr-panel { display: flex; gap: 14px; align-items: center; border: 2px solid #004098; border-radius: 10px; padding: 12px 16px; background: #f8fafc !important; margin-top: auto; }
+            .print-qr-panel img { width: 108px; height: 108px; flex-shrink: 0; border: 1px solid #e2e8f0; background: #fff; }
+            .print-qr-panel h3 { font-size: 15px; font-weight: bold; color: #004098; margin: 0 0 4px; word-break: keep-all; }
+            .print-qr-panel p { font-size: 12px; line-height: 1.45; color: #334155; margin: 0 0 4px; word-break: keep-all; }
+            .print-qr-url { font-size: 11.5px; font-weight: bold; color: #0f172a; word-break: break-all; }
+        }
+        #map-status { left: auto !important; right: 12px !important; top: 12px !important; max-width: min(52%, 280px); text-align: right; }
+    </style>
+</head>
+<body class="antialiased pb-20 md:pb-0 tm-secure-select">
+
+<!-- [Security Lock Modal] -->
+<div id="guidebook-lock-modal" class="fixed inset-0 z-[999] hidden items-center justify-center bg-slate-900/90 backdrop-blur-md px-4 no-print" role="dialog" aria-modal="true" aria-labelledby="guidebook-lock-title">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-6 md:p-8 shadow-2xl text-center border border-slate-100 animate-fade-in-up">
+        <div class="w-16 h-16 bg-blue-50 text-[#004098] rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4 shadow-sm">
+            <i class="fa-solid fa-lock"></i>
+        </div>
+        <h3 id="guidebook-lock-title" class="text-xl font-bold text-slate-800 mb-1">보안 접속 인증</h3>
+        <p class="text-xs text-slate-500 mb-6 leading-relaxed">
+            본 가이드북은 저작권 및 일정 보호를 위해<br>
+            출발 2주 전까지 비밀번호 인증이 필요합니다.<br>
+            <span class="text-xs font-bold text-[#004098] mt-1 block">💡 힌트: 출발일 MM월DD일 → MMDD (예: 01월01일 → 0101)</span>
+        </p>
+        <div class="space-y-3">
+            <input type="password" id="lock-password-input" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="비밀번호 4자리 입력" class="w-full text-center tracking-widest text-lg font-bold border-2 border-slate-200 focus:border-[#004098] rounded-2xl px-4 py-3 outline-none transition" aria-label="비밀번호 4자리">
+            <button type="button" onclick="verifyGuidebookPassword()" class="w-full bg-[#004098] hover:bg-[#002d6b] text-white font-bold py-3.5 rounded-2xl shadow-md transition text-sm">가이드북 입장하기</button>
+        </div>
+        <p id="lock-error-msg" class="text-xs text-rose-600 font-bold mt-3 hidden">비밀번호가 일치하지 않습니다.</p>
+        <div class="mt-6 pt-4 border-t border-slate-100 text-[10px] text-slate-400">[System Powered by TOURMAKER] 지적재산권 보호 구역</div>
+    </div>
+</div>
+
+<div class="print:hidden">
+
+<header class="bg-white/95 backdrop-blur-md shadow-md sticky top-0 z-50 no-print">
+    <nav class="container mx-auto px-3 md:px-4 h-16 flex items-center gap-2">
+        <div class="flex items-center gap-2 shrink-0">
+            <a href="https://tourmaker.kr" target="_blank" rel="noopener">
+                <img src="assets/images/tourmaker-logo.png" alt="Tourmaker" class="h-7 md:h-8">
+            </a>
+            <span id="d-day-badge" class="hidden bg-cyan-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold whitespace-nowrap"></span>
+        </div>
+        <div class="flex-1 min-w-0 overflow-x-auto no-scrollbar">
+            <div class="flex items-center gap-0.5 md:gap-4 whitespace-nowrap pr-2">
+                <a href="#home" class="px-2.5 md:px-3 py-2 text-sm font-bold text-slate-600 hover:text-[#004098] rounded-lg">홈</a>
+                <a href="#highlights" class="px-2.5 md:px-3 py-2 text-sm font-bold text-[#004098] rounded-lg">핵심포인트</a>
+                <a href="#road-safety" class="px-2.5 md:px-3 py-2 text-sm font-bold text-sky-700 hover:bg-sky-50 rounded-lg">차량·안전</a>
+                <a href="#map-section" class="px-2.5 md:px-3 py-2 text-sm font-bold text-purple-600 hover:text-purple-800 rounded-lg"><i class="fa-solid fa-map-location-dot mr-1"></i>동선지도</a>
+                <a href="#schedule" class="px-2.5 md:px-3 py-2 text-sm font-bold text-slate-800 hover:text-[#004098] rounded-lg">세부일정</a>
+                <a href="#places" class="px-2.5 md:px-3 py-2 text-sm font-medium text-slate-600 hover:text-[#004098] rounded-lg">탐방지</a>
+                <a href="#hotel" class="px-2.5 md:px-3 py-2 text-sm font-medium text-slate-600 hover:text-[#004098] rounded-lg">호텔</a>
+                <a href="#video" class="px-2.5 md:px-3 py-2 text-sm font-medium text-slate-600 hover:text-[#004098] rounded-lg">영상</a>
+                <a href="#widgets" class="px-2.5 md:px-3 py-2 text-sm font-medium text-slate-600 hover:text-[#004098] rounded-lg">날씨</a>
+                <a href="#check" class="px-2.5 md:px-3 py-2 text-sm font-medium text-slate-600 hover:text-[#004098] rounded-lg">준비물</a>
+                <a href="#safety" class="px-2.5 md:px-3 py-2 text-sm font-bold text-red-600 rounded-lg">안전/문의</a>
+                <a href="#esg" class="px-2.5 md:px-3 py-2 text-sm font-medium text-emerald-700 rounded-lg">ESG</a>
+            </div>
+        </div>
+        <button type="button" onclick="shareLink()" class="shrink-0 p-2 text-slate-500 hover:text-[#004098]" aria-label="공유"><i class="fa-solid fa-share-nodes"></i></button>
+    </nav>
+</header>
+
+<div id="event-day-bar" class="hidden sticky top-16 z-40 bg-[#004098] text-white no-print shadow-md">
+    <div class="container mx-auto px-4 py-2.5 flex flex-wrap items-center justify-center gap-2">
+        <span class="text-xs font-bold opacity-90 mr-1">오늘 여정</span>
+        <button type="button" onclick="goToTodaySchedule()" class="bg-white/15 hover:bg-white/25 border border-white/30 px-3 py-1.5 rounded-full text-xs font-bold">[오늘의 일정]</button>
+        <button type="button" onclick="goToTodayRoute()" class="bg-white/15 hover:bg-white/25 border border-white/30 px-3 py-1.5 rounded-full text-xs font-bold">[당일 동선]</button>
+    </div>
+</div>
+
+<section id="home" class="hero-bg min-h-[68vh] flex items-center justify-center text-center px-4 relative">
+    <div class="animate-fade-in-up max-w-3xl mx-auto text-white">
+        <span class="bg-[#004098]/90 px-6 py-2 rounded-full text-lg md:text-xl font-bold mb-6 inline-block border border-white/20 shadow-lg tracking-wide">TOURMAKER</span>
+        <h1 class="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg font-title">경주 1박2일<br><span class="text-yellow-300">가족 여행</span></h1>
+        <p class="text-base md:text-lg text-slate-100 font-medium mb-2">성빈과 함께하는 포항·경주 로드트립</p>
+        <p id="hero-date" class="text-xl md:text-2xl text-white font-bold tracking-wide mb-2">2026. 11. 15(일) ~ 11. 16(월)</p>
+        <p id="hero-dynamic-msg" class="hidden text-cyan-200 text-sm md:text-base font-medium mt-2"></p>
+        <p class="text-sm md:text-base text-slate-200 font-medium tracking-wide mt-3">태백 → 포항(오또상스테끼·스페이스워크) → 경주(체스터톤스·황리단길·야경) → 귀가</p>
+    </div>
+</section>
+
+<section id="highlights" class="py-12 bg-white -mt-8 rounded-t-3xl relative z-10 shadow-[0_-5px_20px_rgba(0,0,0,0.1)]">
+    <div class="container mx-auto px-4 max-w-5xl">
+        <div class="text-center mb-8">
+            <p class="text-xs font-bold text-[#004098] tracking-widest uppercase">Family Trip Highlights</p>
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-2 font-title">이번 일정의<br class="md:hidden"/> 5가지 가족 포인트</h2>
+            <p class="text-slate-500 text-sm mt-2">아이와 함께 천천히, 맛과 풍경을 고르게 담은 1박2일입니다.</p>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="p-5 rounded-2xl bg-amber-50 border border-amber-100">
+                <p class="text-2xl mb-2">🥩</p>
+                <h3 class="font-bold text-slate-800 mb-1">포항 오또상스테끼</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">양덕의 일본식 함바그·철판스테끼. 키즈프렌들리 공간에서 든든한 중식.</p>
+            </div>
+            <div class="p-5 rounded-2xl bg-sky-50 border border-sky-100">
+                <p class="text-2xl mb-2">🌌</p>
+                <h3 class="font-bold text-slate-800 mb-1">환호공원 스페이스워크</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">포항 바다 위 하늘 산책로. 가족 인증샷 명소.</p>
+            </div>
+            <div class="p-5 rounded-2xl bg-blue-50 border border-blue-100">
+                <p class="text-2xl mb-2">🏊</p>
+                <h3 class="font-bold text-slate-800 mb-1">체스터톤스 수영장</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">스카이풀·실내풀에서 물놀이 후 황리단길로 이어지는 저녁.</p>
+            </div>
+            <div class="p-5 rounded-2xl bg-indigo-50 border border-indigo-100">
+                <p class="text-2xl mb-2">🌙</p>
+                <h3 class="font-bold text-slate-800 mb-1">첨성대 · 동궁과월지 야경</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">경주의 상징 야경. 아이와 함께 천천히 걷는 밤 산책.</p>
+            </div>
+            <div class="p-5 rounded-2xl bg-emerald-50 border border-emerald-100 sm:col-span-2 lg:col-span-1">
+                <p class="text-2xl mb-2">🏛️</p>
+                <h3 class="font-bold text-slate-800 mb-1">박물관 + 보문 오후</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">국립경주박물관 관람 후 애슐리퀸즈 중식 · 보문호수·동궁원 여유 동선.</p>
+            </div>
+        </div>
+        <div class="mt-8 p-5 rounded-2xl bg-slate-50 border border-slate-200">
+            <p class="font-bold text-slate-700 mb-2">가족 팁</p>
+            <p class="text-sm text-slate-600 leading-relaxed">11월 경주는 낮·밤 기온 차가 큽니다. 야경·수영장용 겉옷과 여분 옷을 챙기고, 장거리 운전은 2시간마다 휴게소·졸음쉼터를 활용해 주세요.</p>
+        </div>
+    </div>
+</section>
+
+<section id="road-safety" class="py-16 bg-sky-50/70 border-t border-sky-100">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <div class="text-center mb-8">
+            <p class="text-xs font-bold text-sky-700 tracking-widest uppercase">Road Trip Guide</p>
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-2">차량 이동 · 안전 안내</h2>
+            <p class="text-slate-500 text-sm mt-2">항공 없이 태백 ↔ 포항 ↔ 경주 자가용·전용차 여정입니다.</p>
+        </div>
+        <div class="bg-white rounded-3xl border border-sky-100 shadow-sm p-6 md:p-8 space-y-5">
+            <div>
+                <h3 class="font-bold text-slate-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-road text-sky-600"></i> 동선 요약</h3>
+                <ul class="text-sm text-slate-600 space-y-1.5 leading-relaxed list-disc pl-5">
+                    <li>1일차: 태백 출발 → <strong>7번 국도 포항 방면</strong> → 오또상스테끼(양덕) → 환호공원 스페이스워크 → 경주 체스터톤스 체크인</li>
+                    <li>2일차: 경주 시내·보문 일대 짧은 동선 후 <strong>15:00~16:00</strong> 경주 출발 → 태백 귀가</li>
+                </ul>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4">
+                <div class="rounded-2xl bg-amber-50 border border-amber-100 p-4">
+                    <h4 class="font-bold text-amber-900 text-sm mb-2">졸음·피로 관리</h4>
+                    <p class="text-sm text-slate-600 leading-relaxed">태백↔경주는 장거리입니다. 2시간마다 휴게소·졸음쉼터에서 스트레칭하고, 교대 운전이 가능하면 번갈아 주세요.</p>
+                </div>
+                <div class="rounded-2xl bg-rose-50 border border-rose-100 p-4">
+                    <h4 class="font-bold text-rose-900 text-sm mb-2">안전벨트 · 카시트</h4>
+                    <p class="text-sm text-slate-600 leading-relaxed">전 좌석 안전벨트 착용. 성빈이 카시트·부스터는 반드시 고정 후 출발해 주세요.</p>
+                </div>
+                <div class="rounded-2xl bg-slate-50 border border-slate-200 p-4">
+                    <h4 class="font-bold text-slate-800 text-sm mb-2">11월 옷차림</h4>
+                    <p class="text-sm text-slate-600 leading-relaxed">낮에도 쌀쌀하고 야경·수영장 전후 체온 변화가 큽니다. 패딩·가디건·여분 양말을 준비해 주세요.</p>
+                </div>
+                <div class="rounded-2xl bg-emerald-50 border border-emerald-100 p-4">
+                    <h4 class="font-bold text-emerald-900 text-sm mb-2">전자기기 충전</h4>
+                    <p class="text-sm text-slate-600 leading-relaxed">내비·휴대폰 배터리를 미리 충전하고, 차량용 충전기·보조배터리를 챙겨 두면 동선 안내가 수월합니다.</p>
+                </div>
+            </div>
+            <p class="text-xs text-slate-500 leading-relaxed">※ 도로·교통·기상 상황에 따라 소요 시간이 달라질 수 있습니다. 당일 내비 안내를 우선해 주세요.</p>
+        </div>
+    </div>
+</section>
+
+<section id="map-section" class="py-16 bg-slate-50 border-t border-slate-200 overflow-hidden relative">
+    <div class="container mx-auto px-4 max-w-5xl">
+        <div class="text-center mb-6">
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-800"><i class="fa-solid fa-map-location-dot text-purple-600 mr-2"></i>여정 동선 지도</h2>
+            <p id="map-hint" class="text-slate-500 mt-2 text-sm">전체 여정 — 태백 → 포항 → 경주 → 태백 (실제 도로 경로)</p>
+        </div>
+        <div class="flex flex-wrap justify-center gap-2 mb-4">
+            <button type="button" id="btn-map-all" onclick="filterMap('all')" class="map-btn px-4 py-2 rounded-full text-sm font-bold border bg-purple-600 text-white border-purple-600">전체</button>
+            <button type="button" id="btn-map-day1" onclick="filterMap('day1')" class="map-btn px-4 py-2 rounded-full text-sm font-bold border bg-white text-slate-600 border-slate-200">1일차</button>
+            <button type="button" id="btn-map-day2" onclick="filterMap('day2')" class="map-btn px-4 py-2 rounded-full text-sm font-bold border bg-white text-slate-600 border-slate-200">2일차</button>
+        </div>
+        <div class="relative">
+            <div id="map"></div>
+            <div id="map-distance" class="hidden absolute top-3 right-3 z-[450] bg-white/95 backdrop-blur border border-slate-200 rounded-2xl shadow-lg px-3 py-2 text-left">
+                <p id="map-distance-leg" class="text-[11px] font-extrabold text-slate-800 leading-snug"></p>
+                <p id="map-distance-time" class="text-xs font-bold text-[#004098] mt-0.5"></p>
+                <p id="map-distance-km" class="text-[11px] font-semibold text-slate-500"></p>
+            </div>
+            <div class="map-zoom-btns no-print">
+                <button type="button" onclick="mapZoom(1)" aria-label="확대">+</button>
+                <button type="button" onclick="mapZoom(-1)" aria-label="축소">−</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="schedule" class="py-16 bg-white border-t border-slate-200">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <div class="flex flex-wrap items-end justify-between gap-3 mb-2">
+            <div>
+                <p class="text-xs font-bold text-[#004098] tracking-widest uppercase">Itinerary</p>
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-1">세부 일정표</h2>
+            </div>
+            <button type="button" onclick="handlePrint()" class="inline-flex items-center justify-center gap-1.5 bg-slate-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md hover:bg-slate-700 transition">
+                <i class="fa-solid fa-print"></i> 일정표 인쇄하기
+            </button>
+        </div>
+        <p class="text-[11px] text-slate-500 leading-relaxed mb-6 no-print">모바일(카카오톡 등)에서는<br>인쇄가 어려울 수 있어요.<br>다른 브라우저나 PC에서 열어 주세요.</p>
+        <div class="flex gap-2 mb-6 overflow-x-auto no-scrollbar">
+            <button type="button" class="tab-btn active px-4 py-2 rounded-full text-sm font-bold border bg-cyan-600 text-white border-cyan-600" onclick="openTab(event,'day1')">1일차 · 11/15(일)</button>
+            <button type="button" class="tab-btn px-4 py-2 rounded-full text-sm font-bold border bg-white text-slate-500 border-slate-200" onclick="openTab(event,'day2')">2일차 · 11/16(월)</button>
+        </div>
+
+        <div id="day1" class="tab-content space-y-4">
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                <p class="text-xs font-bold text-[#004098] mb-1">오전 · 이동</p>
+                <h3 class="font-bold text-slate-800 text-lg mb-2">태백 출발 → 7번 국도 포항 방면</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">여유 있게 출발해 포항 양덕 오또상스테끼로 향합니다. 내비는 ‘오또상스테끼’ 또는 ‘장량로 212’로 검색해 주세요.</p>
+            </div>
+            <div class="rounded-2xl border border-amber-200 bg-amber-50/60 p-5">
+                <p class="text-xs font-bold text-amber-800 mb-1">중식</p>
+                <h3 class="font-bold text-slate-800 text-lg mb-2">오또상스테끼 (포항 양덕)</h3>
+                <p class="text-sm text-slate-600 leading-relaxed mb-3">일본식 수제 함박스테이크·철판스테끼. 장난감·아기의자·키즈메뉴가 있어 가족 식사에 잘 맞습니다.</p>
+                <ul class="text-sm text-slate-600 space-y-1 leading-relaxed">
+                    <li>📍 포항시 북구 장량로 212 · ☎ 054-252-6788</li>
+                    <li>🕐 화~일 11:00~21:00 (브레이크 15:00~17:00) · <strong>월요일 휴무</strong></li>
+                    <li>🍽 추천: 치즈갈릭함바그 · 우동사라다 · 멘치카츠</li>
+                </ul>
+            </div>
+            <div class="rounded-2xl border border-sky-200 bg-sky-50/50 p-5">
+                <p class="text-xs font-bold text-sky-800 mb-1">오후 · 포항</p>
+                <h3 class="font-bold text-slate-800 text-lg mb-2">환호공원 스페이스워크</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">하늘 산책로에서 가족 포토. 바람·기온에 맞춰 겉옷을 챙기고, 아이 손잡고 천천히 걸어 주세요.</p>
+            </div>
+            <div class="rounded-2xl border border-blue-200 bg-white p-5">
+                <p class="text-xs font-bold text-blue-800 mb-1">체크인 · 물놀이</p>
+                <h3 class="font-bold text-slate-800 text-lg mb-2">체스터톤스 경주 체크인 + 수영장</h3>
+                <p class="text-sm text-slate-600 leading-relaxed mb-3">스카이풀·실내풀에서 물놀이. 수영복·수모·여분 옷을 미리 가방에 넣어 두면 편합니다.</p>
+                <img src="assets/images/hotel-chestertons-gyeongju.jpg" alt="체스터톤스 경주" class="schedule-thumb mt-2">
+            </div>
+            <div class="rounded-2xl border border-rose-100 bg-rose-50/40 p-5">
+                <p class="text-xs font-bold text-rose-800 mb-1">석식 · 산책</p>
+                <h3 class="font-bold text-slate-800 text-lg mb-2">황리단길 산책 + 석식</h3>
+                <p class="text-sm text-slate-600 leading-relaxed mb-3">황리단길 일대에서 가족 입맛에 맞는 식당을 골라 가볍게 석식. 카페·디저트 골목도 천천히 둘러보세요.</p>
+                <img src="assets/images/day2-hwangridan.jpg" alt="황리단길" class="schedule-thumb mt-2">
+            </div>
+            <div class="rounded-2xl border border-indigo-200 bg-indigo-50/40 p-5">
+                <p class="text-xs font-bold text-indigo-800 mb-1">야경</p>
+                <h3 class="font-bold text-slate-800 text-lg mb-2">첨성대 + 동궁과월지(안압지) 야경</h3>
+                <p class="text-sm text-slate-600 leading-relaxed mb-3">경주의 대표 야경을 본 뒤 숙소로 귀가합니다. 밤공기가 차가우니 패딩을 꼭 챙기세요.</p>
+                <div class="flex flex-wrap gap-3 mt-2">
+                    <img src="assets/images/day2-cheomseongdae.jpg" alt="첨성대 야경" class="schedule-thumb">
+                    <img src="assets/images/day2-anapji.jpg" alt="동궁과월지 야경" class="schedule-thumb">
+                </div>
+            </div>
+        </div>
+
+        <div id="day2" class="tab-content hidden space-y-4">
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                <p class="text-xs font-bold text-[#004098] mb-1">오전</p>
+                <h3 class="font-bold text-slate-800 text-lg mb-2">조식 자체해결 후 체크아웃</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">호텔 주변·황리단길·보문 일대에서 가볍게 조식 후 체크아웃합니다.</p>
+            </div>
+            <div class="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-5">
+                <p class="text-xs font-bold text-emerald-800 mb-1">문화</p>
+                <h3 class="font-bold text-slate-800 text-lg mb-2">국립경주박물관</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">신라 유물을 아이와 함께 천천히 관람. 실내 코스라 날씨에 덜 민감합니다.</p>
+            </div>
+            <div class="rounded-2xl border border-amber-300 bg-amber-50 p-5">
+                <p class="text-xs font-bold text-amber-900 mb-1">키즈 · 주의</p>
+                <h3 class="font-bold text-slate-800 text-lg mb-2">주렁주렁 경주점 (보문 미탐시티)</h3>
+                <p class="text-sm text-slate-600 leading-relaxed mb-3">일정에 넣어 둔 키즈 실내 체험 코스입니다.</p>
+                <div class="rounded-xl bg-yellow-100 border border-yellow-300 px-4 py-3 text-sm text-amber-950 leading-relaxed">
+                    <strong>⚠ 휴무 안내:</strong> 주렁주렁은 <strong>매월 1·3주 월요일</strong>에 쉽니다. <strong>2026-11-16(월)은 3번째 월요일</strong>이라 <strong>휴무 가능성이 높습니다</strong>. 당일 개장 여부를 전화·공식 채널로 확인해 주세요. 문이 닫혀 있으면 아래 대체 코스를 이용해 주세요.
+                </div>
+                <div class="mt-3 rounded-xl bg-white border border-slate-200 px-4 py-3 text-sm text-slate-700 leading-relaxed">
+                    <strong>대체 코스:</strong> <strong>경주 동궁원(보문)</strong> 또는 <strong>보문호수 산책·포토</strong> — 아이와 짧은 동선으로 충분히 즐길 수 있습니다.
+                </div>
+            </div>
+            <div class="rounded-2xl border border-orange-200 bg-orange-50/50 p-5">
+                <p class="text-xs font-bold text-orange-800 mb-1">중식</p>
+                <h3 class="font-bold text-slate-800 text-lg mb-2">애슐리퀸즈 경주켄싱턴리조트점</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">보문로 182-29 켄싱턴 오스틴관. 다양한 메뉴로 가족 중식에 무난합니다.</p>
+            </div>
+            <div class="rounded-2xl border border-teal-200 bg-teal-50/40 p-5">
+                <p class="text-xs font-bold text-teal-800 mb-1">오후</p>
+                <h3 class="font-bold text-slate-800 text-lg mb-2">보문호수 산책 / 동궁원</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">짧은 산책·포토 후 여유를 두고 출발 준비.</p>
+            </div>
+            <div class="rounded-2xl border border-slate-300 bg-white p-5">
+                <p class="text-xs font-bold text-slate-700 mb-1">귀가</p>
+                <h3 class="font-bold text-slate-800 text-lg mb-2">15:00~16:00 경주 출발 → 태백 귀가</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">해 지기 전 출발을 권장합니다. 졸음 운전 주의 · 휴게소 필수.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="places" class="py-16 bg-slate-50 border-t border-slate-200">
+    <div class="container mx-auto px-4 max-w-5xl">
+        <div class="text-center mb-8">
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-800">탐방 · 스팟 안내</h2>
+            <p class="text-slate-500 text-sm mt-2">이번 여정에서 만나는 주요 장소를 한눈에.</p>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+            <article class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+                <h3 class="font-bold text-slate-800 mb-1">오또상스테끼</h3>
+                <p class="text-xs text-slate-500 mb-2">포항 북구 장량로 212 · 054-252-6788</p>
+                <p class="text-sm text-slate-600 leading-relaxed">함바그·철판스테끼 전문. 화~일 영업, 월 휴무 · 브레이크 15~17시.</p>
+            </article>
+            <article class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+                <h3 class="font-bold text-slate-800 mb-1">환호공원 스페이스워크</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">포항 환호공원 내 하늘 산책로. 가족 포토 명소.</p>
+            </article>
+            <article class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+                <h3 class="font-bold text-slate-800 mb-1">황리단길</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">카페·맛집 골목. 석식과 산책에 좋은 저녁 동선.</p>
+            </article>
+            <article class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+                <h3 class="font-bold text-slate-800 mb-1">첨성대 · 동궁과월지</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">경주 대표 야경. 동궁과월지(안압지)는 야간 관람 동선을 확인해 주세요.</p>
+            </article>
+            <article class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+                <h3 class="font-bold text-slate-800 mb-1">국립경주박물관</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">신라 역사·유물. 아이와 실내 관람하기 좋은 코스.</p>
+            </article>
+            <article class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+                <h3 class="font-bold text-slate-800 mb-1">주렁주렁 · 동궁원 · 보문호수</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">주렁주렁은 1·3주 월요일 휴무 가능. 대체로 동궁원·보문호수 산책.</p>
+            </article>
+            <article class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm sm:col-span-2">
+                <h3 class="font-bold text-slate-800 mb-1">애슐리퀸즈 경주켄싱턴리조트점</h3>
+                <p class="text-xs text-slate-500 mb-2">보문로 182-29 켄싱턴 오스틴관</p>
+                <p class="text-sm text-slate-600 leading-relaxed">2일차 가족 중식. 보문 일대 오후 동선과 가깝습니다.</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section id="hotel" class="py-16 bg-white border-t border-slate-200">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <div class="text-center mb-8">
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-800">숙소 안내</h2>
+            <p class="text-slate-500 text-sm mt-2">체스터톤스 경주 · 수영장(스카이풀/실내) 이용</p>
+        </div>
+        <div class="bg-slate-50 rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
+            <img src="assets/images/hotel-chestertons-gyeongju.jpg" alt="체스터톤스 경주" class="w-full h-56 md:h-72 object-cover">
+            <div class="p-6 md:p-8">
+                <h3 class="text-xl font-bold text-slate-800 mb-2">체스터톤스 경주 (Chestertons Gyeongju)</h3>
+                <p class="text-sm text-slate-600 leading-relaxed mb-3">경상북도 경주시 광중길 11 · ☎ 054-771-3600</p>
+                <ul class="text-sm text-slate-600 space-y-1.5 list-disc pl-5 leading-relaxed">
+                    <li>체크인 후 스카이풀·실내풀 물놀이</li>
+                    <li>황리단길·첨성대·동궁과월지 야경 동선과 접근 용이</li>
+                    <li>현지 사정·시설 운영 시간에 따라 변동될 수 있습니다</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="video" class="py-16 bg-slate-900 text-white border-t border-slate-800">
+    <div class="container mx-auto px-4 max-w-4xl text-center">
+        <h2 class="text-2xl md:text-3xl font-bold mb-2">경주 미리 보기</h2>
+        <p class="text-slate-400 text-sm mb-6">여행 전에 분위기만 살짝 느껴 보세요.</p>
+        <div class="relative w-full overflow-hidden rounded-2xl shadow-xl" style="padding-bottom:56.25%">
+            <iframe class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/Q7J7gY5Yp5c" title="경주 관광 영상" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <p class="text-[11px] text-slate-500 mt-3">영상이 재생되지 않으면 유튜브에서 ‘경주 관광’으로 검색해 주세요.</p>
+    </div>
+</section>
+
+<section id="widgets" class="py-12 bg-blue-50 border-t border-slate-200">
+    <div class="container mx-auto px-4 max-w-3xl">
+        <h2 class="text-xl font-bold text-slate-800 text-center mb-2">경주 · 포항 날씨</h2>
+        <p class="text-xs text-slate-500 text-center mb-4">Open-Meteo 기준 · 11월 쌀쌀한 옷차림 권장</p>
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm mb-4">
+            <p class="text-xs font-bold text-[#004098] mb-2">경주</p>
+            <div id="weather-container" class="grid grid-cols-5 gap-2"><div class="text-center text-sm text-slate-500 col-span-5 py-4">날씨 불러오는 중…</div></div>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+            <p class="text-xs font-bold text-sky-700 mb-2">포항</p>
+            <div id="weather-pohang" class="grid grid-cols-5 gap-2"><div class="text-center text-sm text-slate-500 col-span-5 py-4">날씨 불러오는 중…</div></div>
+        </div>
+    </div>
+</section>
+
+<section id="check" class="py-16 bg-white border-t border-slate-100">
+    <div class="container mx-auto px-4 max-w-3xl">
+        <h2 class="text-2xl font-bold text-slate-800 text-center mb-2">준비물 체크리스트</h2>
+        <p class="text-sm text-slate-500 text-center mb-6">체크 상태는 이 기기에 저장됩니다.</p>
+        <div id="checklist-container" class="grid sm:grid-cols-2 gap-2 mb-4"></div>
+        <div class="text-center">
+            <button type="button" onclick="resetChecklist()" class="text-xs font-bold text-slate-500 underline">체크리스트 초기화</button>
+        </div>
+        <div class="mt-6">
+            <label for="travel-memo" class="block text-sm font-bold text-slate-700 mb-2">가족 메모</label>
+            <textarea id="travel-memo" rows="3" class="w-full rounded-2xl border border-slate-200 p-3 text-sm outline-none focus:border-[#004098]" placeholder="식당 예약, 수영복, 카시트 확인 등"></textarea>
+        </div>
+    </div>
+</section>
+
+<section id="safety" class="py-16 bg-slate-50 border-t border-slate-200">
+    <div class="container mx-auto px-4 max-w-3xl">
+        <h2 class="text-2xl font-bold text-slate-800 text-center mb-6">안전 · 긴급 · 문의</h2>
+        <div class="grid sm:grid-cols-2 gap-3">
+            <a href="tel:112" class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm"><p class="text-xs text-rose-600 font-bold">긴급</p><p class="font-bold text-slate-800">112 경찰 · 119 소방</p></a>
+            <a href="tel:1339" class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm"><p class="text-xs text-emerald-600 font-bold">의료</p><p class="font-bold text-slate-800">1339 응급의료정보</p></a>
+            <a href="tel:054-771-3600" class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm"><p class="text-xs text-[#004098] font-bold">숙소</p><p class="font-bold text-slate-800">체스터톤스 경주</p><p class="text-sm text-slate-600">054-771-3600</p></a>
+            <a href="tel:010-9443-7881" class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm"><p class="text-xs text-[#004098] font-bold">투어메이커</p><p class="font-bold text-slate-800">이재명 대표</p><p class="text-sm text-slate-600">010-9443-7881</p></a>
+        </div>
+    </div>
+</section>
+
+<section id="esg" class="py-12 bg-green-50 border-t border-green-100">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-lg border border-green-200 p-8 text-center">
+            <h2 class="text-2xl font-bold text-slate-800 mb-2"><i class="fa-solid fa-leaf text-green-600"></i> ESG 실천 대시보드</h2>
+            <p class="text-sm text-slate-500 mb-6">종이 일정표 대신 스마트 가이드북을 사용하는 디지털 전환</p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200"><p class="text-xs text-amber-800 font-bold">📊 실시간 가이드북 열람</p><p class="text-xl font-black text-amber-900"><span class="tm-view-count-val">--</span><span class="text-sm font-medium"> 회</span></p></div>
+                <div class="bg-green-50 p-4 rounded-2xl border border-green-100"><p class="text-xs text-slate-500 font-bold">종이 절감</p><p class="text-xl font-black">12<span class="text-sm font-medium"> 장</span></p></div>
+                <div class="bg-green-50 p-4 rounded-2xl border border-green-100"><p class="text-xs text-slate-500 font-bold">탄소 감소</p><p class="text-xl font-black">57<span class="text-sm font-medium"> g</span></p></div>
+                <div class="bg-green-50 p-4 rounded-2xl border border-green-100"><p class="text-xs text-slate-500 font-bold">물 절약</p><p class="text-xl font-black">112<span class="text-sm font-medium"> L</span></p></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="bg-[#f8f9fa] py-12 border-t border-slate-200 text-center">
+    <div class="container mx-auto px-4 max-w-3xl">
+        <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-200 shadow-md mb-8 text-left md:text-center w-full">
+            <div class="flex flex-wrap items-center justify-center gap-2 mb-3">
+                <span class="inline-flex items-center gap-1.5 bg-blue-50 text-[#004098] text-xs font-extrabold px-3 py-1 rounded-full border border-blue-200">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> TOURMAKER SMART GUIDEBOOK
+                </span>
+            </div>
+            <h3 class="text-lg md:text-xl font-extrabold text-slate-800 mb-1.5">우리 모임·학교·기관도 스마트 가이드북으로 여행 준비하기</h3>
+            <p class="text-xs md:text-sm text-slate-500 leading-relaxed mb-5">맞춤 일정표, 실시간 도로 동선 지도, 체크리스트까지 디지털로 지원합니다.</p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <button type="button" onclick="openTmInquiryModal()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#004098] hover:bg-[#002d6b] text-white font-bold px-6 py-3.5 rounded-2xl shadow-md transition active:scale-95 text-sm">
+                    <i class="fa-solid fa-comments"></i> 투어메이커 맞춤 견적 · 상담 문의
+                </button>
+                <a href="https://tourmaker.kr/?utm_source=smart_guidebook&amp;utm_medium=footer_btn&amp;utm_campaign=261115_Gyeongju" target="_blank" rel="noopener" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold px-5 py-3.5 rounded-2xl border border-slate-200 transition text-sm">
+                    <img src="assets/images/tourmaker-logo.png" alt="Tourmaker" class="h-5"> 공식 홈페이지 <i class="fa-solid fa-chevron-right text-xs"></i>
+                </a>
+            </div>
+        </div>
+        <div class="w-full mb-5 px-4 py-3 rounded-xl bg-slate-200/70 border border-slate-300 text-[11px] text-slate-600 leading-relaxed text-left">
+            <p class="font-bold text-slate-800 mb-0.5">
+                <i class="fa-solid fa-shield-halved text-[#004098] mr-1"></i> 지적재산권 보호 및 외부 유출 금지 안내
+            </p>
+            본 스마트 가이드북은 <strong>(주)투어메이커의 고유 지적재산</strong>입니다.
+            <strong class="tm-client-name">가족 여행</strong> 전용 제안서·스마트 가이드북이며, 외부 유출 시 <strong>접속 IP 및 열람 횟수(현재 <span class="tm-view-count-val font-extrabold text-red-600">...</span>회)가 자동 기록</strong>됩니다.
+        </div>
+        <p class="text-xs text-slate-500 w-full leading-relaxed">[System Powered by TOURMAKER]<br>본 페이지는 <strong>경주 1박2일 · 가족 여행 (성빈과 함께)</strong> 스마트 가이드북이며 <a href="https://tourmaker.kr" class="underline font-bold text-slate-600" target="_blank" rel="noopener">투어메이커</a>의 트래블 테크로 제작되었습니다.</p>
+        <p class="text-[11px] text-slate-700 font-medium mt-3 leading-relaxed">© 2026 이재명 · 투어메이커 스마트 가이드북 플랫폼<br><span class="font-bold text-[#004098]">한국저작권위원회 저작권 등록번호 C-2026-059022</span> (등록일 2026.11.12)</p>
+    </div>
+</footer>
+
+<div id="tm-inquiry-modal" class="fixed inset-0 z-[120] hidden items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm px-0 sm:px-4 no-print" onclick="closeTmInquiryModal()">
+    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-100 animate-fade-in-up" onclick="event.stopPropagation()">
+        <div class="bg-gradient-to-r from-[#004098] to-[#002d6b] p-5 text-white flex items-center justify-between">
+            <div>
+                <span class="text-[10px] font-extrabold tracking-widest uppercase text-sky-200 block">TOURMAKER CONSULTING DESK</span>
+                <h3 class="font-bold text-lg mt-0.5">투어메이커 맞춤 견적 · 상담 문의</h3>
+            </div>
+            <button type="button" onclick="closeTmInquiryModal()" class="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center text-white" aria-label="닫기"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="p-5 space-y-3 bg-slate-50">
+            <a href="https://pf.kakao.com/_fxjxiQn/chat" target="_blank" rel="noopener" onclick="trackTmInquiry('kakao')" class="flex items-center justify-between p-4 rounded-2xl bg-[#FEE500] hover:brightness-95 text-slate-900 shadow-sm transition active:scale-[0.99]">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-xl bg-slate-900/10 flex items-center justify-center text-xl font-black">💬</div>
+                    <div class="text-left">
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <span class="font-extrabold text-sm">카카오톡 비즈니스 1:1 상담</span>
+                            <span class="text-[10px] font-extrabold bg-rose-600 text-white px-2 py-0.5 rounded-full">가장 추천</span>
+                            <span class="text-[10px] font-extrabold bg-slate-900 text-[#FEE500] px-2 py-0.5 rounded-full">조혁 이사 전담</span>
+                        </div>
+                        <p class="text-xs text-slate-800/80 mt-0.5">조혁 이사 전담 응대 · 희망 여행지·일정을 바로 상담</p>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-right text-slate-700 text-xs"></i>
+            </a>
+            <a id="tm-sms-inquiry-link" href="sms:010-4249-4026" onclick="trackTmInquiry('sms')" class="flex items-center justify-between p-4 rounded-2xl bg-white hover:bg-sky-50 border border-sky-200 text-slate-800 shadow-sm transition active:scale-[0.99]">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center text-lg"><i class="fa-solid fa-comment-sms"></i></div>
+                    <div class="text-left">
+                        <span class="font-extrabold text-sm block">10초 문자(SMS) 간편 견적 문의</span>
+                        <p class="text-xs text-slate-500 mt-0.5">조혁 이사(010-4249-4026)에게 문의 양식 자동 입력</p>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-right text-slate-400 text-xs"></i>
+            </a>
+            <div class="grid grid-cols-2 gap-2.5">
+                <a href="tel:010-4249-4026" onclick="trackTmInquiry('call_jo')" class="p-3.5 rounded-2xl bg-white hover:bg-slate-100 border border-slate-200 text-left shadow-sm transition">
+                    <p class="text-[10px] font-bold text-emerald-700">현장·카톡·견적</p>
+                    <p class="font-extrabold text-sm text-slate-800 mt-0.5">조혁 이사</p>
+                    <p class="text-xs font-bold text-slate-600 mt-1"><i class="fa-solid fa-phone mr-1 text-emerald-600"></i>010-4249-4026</p>
+                </a>
+                <a href="tel:010-9443-7881" onclick="trackTmInquiry('call_lee')" class="p-3.5 rounded-2xl bg-white hover:bg-slate-100 border border-slate-200 text-left shadow-sm transition">
+                    <p class="text-[10px] font-bold text-[#004098]">총괄·기획</p>
+                    <p class="font-extrabold text-sm text-slate-800 mt-0.5">이재명 대표</p>
+                    <p class="text-xs font-bold text-slate-600 mt-1"><i class="fa-solid fa-phone mr-1 text-[#004098]"></i>010-9443-7881</p>
+                </a>
+            </div>
+            <a href="tel:033-562-2551" onclick="trackTmInquiry('call_office')" class="flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 text-slate-800 shadow-sm">
+                <span class="text-sm font-bold">사무실 033-562-2551</span>
+                <i class="fa-solid fa-phone text-slate-400 text-xs"></i>
+            </a>
+            <a href="https://tourmaker.kr/?utm_source=smart_guidebook&amp;utm_medium=inquiry_modal&amp;utm_campaign=261115_Gyeongju" target="_blank" rel="noopener" onclick="trackTmInquiry('website')" class="flex items-center justify-between p-4 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white shadow-sm transition">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-sm"><i class="fa-solid fa-globe text-sky-300"></i></div>
+                    <div class="text-left">
+                        <span class="font-bold text-sm block">투어메이커 공식 홈페이지 · 포트폴리오</span>
+                        <p class="text-[11px] text-slate-300 mt-0.5">tourmaker.kr</p>
+                    </div>
+                </div>
+                <i class="fa-solid fa-arrow-up-right-from-square text-xs text-slate-300"></i>
+            </a>
+        </div>
+    </div>
+</div>
+</div>
+
+<div id="print-area">
+    <div class="print-page print-page-break">
+        <div class="std-header">
+            <div class="logo"><img src="assets/images/tourmaker-logo.png" alt="투어메이커"></div>
+            <div class="std-doc-info">문서번호: TM-261115-GJ · 1/2</div>
+        </div>
+        <div class="std-title">
+            <h1>경주 1박2일 · 가족 여행 (성빈과 함께) 일정표</h1>
+        </div>
+        <div class="std-overview">
+            <div><span class="label">행사기간</span> 2026. 11. 15 (일) ~ 11. 16 (월)</div>
+            <div><span class="label">이동</span> 자가용 · 태백 ↔ 포항 ↔ 경주</div>
+            <div><span class="label">숙소</span> 체스터톤스 경주</div>
+        </div>
+        <table class="std-table">
+            <thead>
+                <tr>
+                    <th class="col-date">일자</th>
+                    <th class="col-desc">상세 일정</th>
+                    <th class="col-meal">식사</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="day-divider">
+                    <td class="col-date"><strong>제1일</strong><span class="date-sub">11/15 (일)</span><span class="date-city">태백 · 포항 · 경주</span></td>
+                    <td class="col-desc">
+                        <ul class="desc-list">
+                            <li>태백 출발 → 7번 국도 포항 방면</li>
+                            <li><span class="highlight">▶ 중식 오또상스테끼</span><span class="desc-note">포항 북구 장량로 212 · 054-252-6788</span></li>
+                            <li><span class="highlight">▶ 환호공원 스페이스워크</span> 가족 포토</li>
+                            <li>경주 이동 · <span class="highlight">체스터톤스 체크인 + 수영장</span></li>
+                            <li><span class="highlight">▶ 황리단길</span> 산책 · 석식</li>
+                            <li><span class="highlight">▶ 첨성대 · 동궁과월지(안압지) 야경</span> 후 숙소 귀가</li>
+                        </ul>
+                        <hr class="hotel-divider">
+                        <div class="hotel-info"><strong>HOTEL : 체스터톤스 경주 (광중길 11 · 054-771-3600)</strong></div>
+                    </td>
+                    <td class="col-meal"><div class="meal-wrapper"><div class="meal-simple"><strong>조:</strong> ×</div><div class="meal-simple"><strong>중:</strong> 오또상스테끼</div><div class="meal-simple"><strong>석:</strong> 황리단길</div></div></td>
+                </tr>
+                <tr class="day-divider">
+                    <td class="col-date"><strong>제2일</strong><span class="date-sub">11/16 (월)</span><span class="date-city">경주 · 태백</span></td>
+                    <td class="col-desc">
+                        <ul class="desc-list">
+                            <li>조식 자체해결 후 체크아웃</li>
+                            <li><span class="highlight">▶ 국립경주박물관</span></li>
+                            <li><span class="highlight">▶ 주렁주렁 경주점</span><span class="desc-note">※ 1·3주 월요일 휴무 — 11/16은 3번째 월요일이라 휴무 가능성 높음. 대체: 동궁원 또는 보문호수 산책</span></li>
+                            <li><span class="highlight">▶ 중식 애슐리퀸즈</span> 경주켄싱턴리조트점</li>
+                            <li>오후 보문호수 / 동궁원</li>
+                            <li><span class="time-tag">15:00~16:00</span> 경주 출발 → 태백 귀가</li>
+                        </ul>
+                    </td>
+                    <td class="col-meal"><div class="meal-wrapper"><div class="meal-simple"><strong>조:</strong> 자체</div><div class="meal-simple"><strong>중:</strong> 애슐리퀸즈</div><div class="meal-simple"><strong>석:</strong> ×</div></div></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="remarks">※ 도로·시설·기상 사정에 따라 일정이 달라질 수 있습니다. 주렁주렁은 당일 개장 여부를 확인해 주세요.</div>
+        <div class="footer-box">
+            <a href="https://tourmaker.kr" class="brand-link">[System Powered by TOURMAKER]</a>
+            <div class="manager-info"><div class="names">담당자 : 이재명 010-9443-7881 · 조혁 010-4249-4026</div></div>
+        </div>
+    </div>
+
+    <div class="print-page">
+        <div class="std-header">
+            <div class="logo"><img src="assets/images/tourmaker-logo.png" alt="투어메이커"></div>
+            <div class="std-doc-info">문서번호: TM-261115-GJ · 2/2</div>
+        </div>
+        <div class="std-title"><h1>가족 여행 준비물 · 차량 안전 요약</h1></div>
+        <p class="print-section-title">출발 전 확인</p>
+        <div class="print-check-grid">
+            <div class="print-check-item"><span class="print-check-box"></span><span>신분증 · 숙소 예약 확인</span></div>
+            <div class="print-check-item"><span class="print-check-box"></span><span>카시트 · 안전벨트</span></div>
+            <div class="print-check-item"><span class="print-check-box"></span><span>수영복 · 수모 · 여분 옷</span></div>
+            <div class="print-check-item"><span class="print-check-box"></span><span>11월 패딩 · 겉옷</span></div>
+            <div class="print-check-item"><span class="print-check-box"></span><span>차량용 충전기 · 보조배터리</span></div>
+            <div class="print-check-item"><span class="print-check-box"></span><span>개인 상비약 · 마스크</span></div>
+            <div class="print-check-item"><span class="print-check-box"></span><span>편한 신발 · 여분 양말</span></div>
+            <div class="print-check-item"><span class="print-check-box"></span><span>내비 · 휴게소 계획</span></div>
+        </div>
+        <div class="print-seat-box">
+            <h3>🚗 차량 이동 · 안전 안내</h3>
+            <ul>
+                <li><strong>동선</strong> : 태백 → 7번 국도 포항(오또상스테끼·스페이스워크) → 경주 체스터톤스 → 2일차 시내·보문 후 15:00~16:00 태백 귀가</li>
+                <li><strong>졸음 방지</strong> : 2시간마다 휴게소·졸음쉼터 스트레칭 · 가능하면 교대 운전</li>
+                <li><strong>안전</strong> : 전 좌석 안전벨트 · 유아 카시트 고정 필수</li>
+                <li><strong>11월</strong> : 야경·수영장 전후 체온 변화 대비 겉옷 준비</li>
+            </ul>
+        </div>
+        <div class="print-qr-panel">
+            <img src="assets/images/guidebook-qr.png" alt="스마트 가이드북 QR" width="128" height="128">
+            <div>
+                <h3>스마트 가이드북</h3>
+                <p>QR을 스캔하면 상세 일정·동선 지도·날씨·준비물을 휴대폰에서 바로 확인할 수 있습니다.</p>
+                <p class="print-qr-url">https://indadady.github.io/261115_Gyeongju/</p>
+            </div>
+        </div>
+        <div class="footer-box">
+            <a href="https://tourmaker.kr" class="brand-link">[System Powered by TOURMAKER]</a>
+            <div class="manager-info"><div class="names">담당자 : 이재명 010-9443-7881 · 조혁 010-4249-4026</div></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const TEST_DATE = "";
+const EVENT_DAYS = { '2026-11-15': 'day1', '2026-11-16': 'day2' };
+const EVENT_START = '2026-11-15';
+const EVENT_END = '2026-11-16';
+
+function isInAppBrowser() {
+    const ua = (navigator.userAgent || '').toLowerCase();
+    return /kakaotalk|naver|line\/|fbav|instagram|daumapps|everytimeapp|band\//.test(ua);
+}
+function handlePrint() {
+    if (isInAppBrowser()) {
+        alert('이 앱에서는 인쇄가 어려워요.\n다른 브라우저나 PC에서 열어 주세요.');
+        return;
+    }
+    window.print();
+}
+function getGuidebookToday() {
+    const q = new URLSearchParams(location.search).get('test_date');
+    if (q && /^\d{4}-\d{2}-\d{2}$/.test(q)) return q;
+    if (TEST_DATE) return TEST_DATE;
+    return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date());
+}
+function ymdDiffDays(a, b) {
+    const [ay, am, ad] = a.split('-').map(Number);
+    const [by, bm, bd] = b.split('-').map(Number);
+    return Math.round((Date.UTC(ay, am - 1, ad) - Date.UTC(by, bm - 1, bd)) / 86400000);
+}
+function getTodayDayKey() { return EVENT_DAYS[getGuidebookToday()] || null; }
+function activateDayTab(dayKey) {
+    const btn = document.querySelector(`.tab-btn[onclick*="'${dayKey}'"]`);
+    if (!btn) return;
+    openTab({ currentTarget: btn }, dayKey);
+}
+function goToTodaySchedule() {
+    const dayKey = getTodayDayKey();
+    if (dayKey) activateDayTab(dayKey);
+    document.getElementById('schedule')?.scrollIntoView({ behavior: 'smooth' });
+}
+function goToTodayRoute() {
+    const dayKey = getTodayDayKey();
+    if (dayKey) filterMap(dayKey);
+    document.getElementById('map-section')?.scrollIntoView({ behavior: 'smooth' });
+}
+function initEventDayUI() {
+    const bar = document.getElementById('event-day-bar');
+    if (!bar) return;
+    const dayKey = getTodayDayKey();
+    bar.classList.toggle('hidden', !dayKey);
+    document.body.classList.toggle('event-day', !!dayKey);
+    if (dayKey) activateDayTab(dayKey);
+}
+function openTab(evt, tabId) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active', 'bg-cyan-600', 'text-white', 'border-cyan-600');
+        btn.classList.add('bg-white', 'text-slate-500', 'border-slate-200');
+    });
+    document.getElementById(tabId)?.classList.remove('hidden');
+    const target = evt && evt.currentTarget ? evt.currentTarget : document.querySelector(`.tab-btn[onclick*="'${tabId}'"]`);
+    if (target) {
+        target.classList.add('active', 'bg-cyan-600', 'text-white', 'border-cyan-600');
+        target.classList.remove('bg-white', 'text-slate-500', 'border-slate-200');
+    }
+}
+function shareLink() {
+    const url = window.location.href;
+    if (navigator.share) navigator.share({ title: '경주 1박2일 가족 여행 가이드북', url }).catch(()=>{});
+    else navigator.clipboard?.writeText(url).then(() => alert('링크가 복사되었습니다.'));
+}
+function setDDayLogic() {
+    const today = getGuidebookToday();
+    const untilStart = ymdDiffDays(EVENT_START, today);
+    const sinceStart = ymdDiffDays(today, EVENT_START);
+    const afterEnd = ymdDiffDays(today, EVENT_END);
+    const badge = document.getElementById('d-day-badge');
+    const heroDynamicMsg = document.getElementById('hero-dynamic-msg');
+    const heroDate = document.getElementById('hero-date');
+    if (!badge) return;
+    if (untilStart > 0) {
+        badge.textContent = `D-${untilStart}`;
+        badge.className = 'bg-blue-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold whitespace-nowrap animate-pulse';
+    } else if (afterEnd <= 0) {
+        const currentDay = sinceStart + 1;
+        badge.textContent = `${currentDay}일차`;
+        badge.className = 'bg-orange-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold whitespace-nowrap animate-pulse';
+        heroDate?.classList.add('hidden');
+        if (heroDynamicMsg) {
+            heroDynamicMsg.innerHTML = `현재 <strong>${currentDay}일차</strong> 여정이 진행 중입니다.`;
+            heroDynamicMsg.classList.remove('hidden');
+        }
+    } else {
+        badge.textContent = '여정 종료';
+        badge.className = 'bg-slate-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold whitespace-nowrap';
+        heroDate?.classList.add('hidden');
+        if (heroDynamicMsg) {
+            heroDynamicMsg.innerHTML = '모든 여정이 종료되었습니다.<br>좋은 추억으로 오래 간직되길 바랍니다.';
+            heroDynamicMsg.classList.remove('hidden');
+        }
+    }
+    badge.classList.remove('hidden');
+}
+async function renderWeather(elId, lat, lon) {
+    const container = document.getElementById(elId);
+    if (!container) return;
+    try {
+        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Asia%2FSeoul&forecast_days=5`);
+        const weatherData = await weatherRes.json();
+        const weatherMap = {0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌧️',53:'🌧️',55:'🌧️',61:'☔',63:'☔',65:'☔',71:'❄️',73:'❄️',75:'❄️',95:'⛈️'};
+        const codes = weatherData.daily.weather_code || [];
+        container.innerHTML = '';
+        for (let i = 0; i < Math.min(5, (weatherData.daily.time || []).length); i++) {
+            const dateStr = weatherData.daily.time[i].substring(5).replace('-', '/');
+            const icon = weatherMap[codes[i]] || '🌥️';
+            const tMax = Math.round(weatherData.daily.temperature_2m_max[i]);
+            const tMin = Math.round(weatherData.daily.temperature_2m_min[i]);
+            container.innerHTML += `<div class="bg-slate-50 border border-slate-100 rounded-xl p-2 text-center"><div class="text-[10px] text-slate-500 font-bold mb-1">${dateStr}</div><div class="text-xl mb-1">${icon}</div><div class="text-[10px] font-bold"><span class="text-red-500">${tMax}°</span> <span class="text-blue-500">${tMin}°</span></div></div>`;
+        }
+    } catch (e) {
+        container.innerHTML = '<div class="text-xs text-red-500 w-full text-center col-span-5">날씨 정보를 불러오지 못했습니다.</div>';
+    }
+}
+function fetchWidgets() {
+    renderWeather('weather-container', 35.8562, 129.2247);
+    renderWeather('weather-pohang', 36.0190, 129.3435);
+}
+const CHECK_KEY = 'tm_261115_gyeongju_chk_v1';
+const CHECK_ITEMS = [
+    '신분증 · 숙소 예약 확인',
+    '카시트 · 안전벨트 확인',
+    '수영복 · 수모 · 여분 옷',
+    '11월용 패딩 · 겉옷',
+    '차량용 충전기 · 보조배터리',
+    '개인 상비약 · 마스크',
+    '편한 신발 · 여분 양말',
+    '내비 · 휴게소 계획'
+];
+function renderChecklist() {
+    const container = document.getElementById('checklist-container');
+    if (!container) return;
+    const saved = JSON.parse(localStorage.getItem(CHECK_KEY) || '{}');
+    container.innerHTML = CHECK_ITEMS.map((label, idx) => {
+        const id = `chk_${idx}`;
+        const checked = saved[id] ? 'checked' : '';
+        return `<label class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 cursor-pointer hover:bg-blue-50 transition"><input type="checkbox" id="${id}" ${checked} class="h-4 w-4 text-[#004098] rounded"><span class="text-sm text-slate-700">${label}</span></label>`;
+    }).join('');
+    container.querySelectorAll('input[type=checkbox]').forEach(cb => {
+        cb.addEventListener('change', () => {
+            const currentSaved = JSON.parse(localStorage.getItem(CHECK_KEY) || '{}');
+            currentSaved[cb.id] = cb.checked;
+            localStorage.setItem(CHECK_KEY, JSON.stringify(currentSaved));
+        });
+    });
+}
+function resetChecklist() {
+    if (confirm('체크리스트를 초기화하시겠습니까?')) {
+        localStorage.removeItem(CHECK_KEY);
+        renderChecklist();
+    }
+}
+
+let currentMap = null, mapInited = false, mapLayers = [], mapDrawSeq = 0, activeBus = null;
+const osrmCache = {};
+const spots = {
+    taebaek: { c:[37.1640, 128.9856], t:'태백', col:'#64748b', i:'🏠' },
+    ottosang: { c:[36.0820, 129.4010], t:'오또상스테끼', col:'#f59e0b', i:'🥩' },
+    spacewalk: { c:[36.0659, 129.3915], t:'스페이스워크', col:'#0ea5e9', i:'🌌' },
+    chestertons: { c:[35.8793, 129.2244], t:'체스터톤스', col:'#3b82f6', i:'🏨' },
+    hwangridan: { c:[35.8378, 129.2116], t:'황리단길', col:'#e11d48', i:'🛍️' },
+    cheomseongdae: { c:[35.8347, 129.2190], t:'첨성대', col:'#6366f1', i:'🏯' },
+    anapji: { c:[35.8348, 129.2267], t:'동궁과월지', col:'#8b5cf6', i:'🌙' },
+    museum: { c:[35.8294, 129.2280], t:'경주박물관', col:'#059669', i:'🏛️' },
+    zoolung: { c:[35.8347, 129.2896], t:'주렁주렁', col:'#f97316', i:'🦒' },
+    ashley: { c:[35.8607, 129.2684], t:'애슐리퀸즈', col:'#ea580c', i:'🍽️' },
+    bomun: { c:[35.8430, 129.2860], t:'보문호수·동궁원', col:'#14b8a6', i:'🌳' }
+};
+const mapHints = {
+    all: '전체 여정 — 태백 → 포항(오또상·스페이스워크) → 경주 → 태백 귀가',
+    day1: '1일차: 태백 → 오또상스테끼 → 스페이스워크 → 체스터톤스 → 황리단길 → 첨성대 → 동궁과월지 → 숙소',
+    day2: '2일차: 체스터톤스 → 박물관 → 주렁주렁(또는 동궁원) → 애슐리퀸즈 → 보문 → 태백 귀가'
+};
+const routes = {
+    all: {
+        zoom: ['taebaek','ottosang','spacewalk','chestertons','hwangridan','cheomseongdae','anapji','museum','bomun'],
+        maxZoom: 8,
+        legs: [
+            { from:'taebaek', to:'ottosang', mode:'road', color:'#0891b2', label:'태백 → 포항 (7번 국도)' },
+            { from:'ottosang', to:'spacewalk', mode:'road', color:'#0ea5e9' },
+            { from:'spacewalk', to:'chestertons', mode:'road', color:'#3b82f6', label:'포항 → 경주' },
+            { from:'chestertons', to:'hwangridan', mode:'road', color:'#e11d48' },
+            { from:'hwangridan', to:'cheomseongdae', mode:'road', color:'#6366f1' },
+            { from:'cheomseongdae', to:'anapji', mode:'road', color:'#8b5cf6' },
+            { from:'anapji', to:'chestertons', mode:'road', color:'#3b82f6' },
+            { from:'chestertons', to:'museum', mode:'road', color:'#059669' },
+            { from:'museum', to:'zoolung', mode:'road', color:'#f97316' },
+            { from:'zoolung', to:'ashley', mode:'road', color:'#ea580c' },
+            { from:'ashley', to:'bomun', mode:'road', color:'#14b8a6' },
+            { from:'bomun', to:'taebaek', mode:'road', color:'#64748b', label:'경주 → 태백 귀가' }
+        ]
+    },
+    day1: {
+        zoom: ['ottosang','spacewalk','chestertons','hwangridan','cheomseongdae','anapji'],
+        maxZoom: 11,
+        legs: [
+            { from:'taebaek', to:'ottosang', mode:'road', color:'#0891b2', label:'태백 → 오또상스테끼' },
+            { from:'ottosang', to:'spacewalk', mode:'road', color:'#0ea5e9' },
+            { from:'spacewalk', to:'chestertons', mode:'road', color:'#3b82f6' },
+            { from:'chestertons', to:'hwangridan', mode:'road', color:'#e11d48' },
+            { from:'hwangridan', to:'cheomseongdae', mode:'road', color:'#6366f1' },
+            { from:'cheomseongdae', to:'anapji', mode:'road', color:'#8b5cf6' },
+            { from:'anapji', to:'chestertons', mode:'road', color:'#3b82f6' }
+        ]
+    },
+    day2: {
+        zoom: ['chestertons','museum','zoolung','ashley','bomun'],
+        maxZoom: 11,
+        legs: [
+            { from:'chestertons', to:'museum', mode:'road', color:'#059669' },
+            { from:'museum', to:'zoolung', mode:'road', color:'#f97316', label:'주렁주렁(휴무 시 동궁원)' },
+            { from:'zoolung', to:'ashley', mode:'road', color:'#ea580c' },
+            { from:'ashley', to:'bomun', mode:'road', color:'#14b8a6' },
+            { from:'bomun', to:'taebaek', mode:'road', color:'#64748b', label:'15:00~16:00 태백 귀가' }
+        ]
+    }
+};
+function isMobileView() { return window.matchMedia('(max-width: 768px)').matches; }
+function pathMeters(path) {
+    let total = 0;
+    for (let i = 1; i < path.length; i++) total += L.latLng(path[i - 1]).distanceTo(L.latLng(path[i]));
+    return total;
+}
+function formatApproxKm(meters) {
+    if (!meters || meters <= 0) return '';
+    if (meters < 800) return '약 ' + Math.round(meters / 100) * 100 + 'm';
+    const km = meters / 1000;
+    if (km < 10) return '약 ' + (Math.round(km * 2) / 2) + 'km';
+    if (km < 50) return '약 ' + Math.round(km) + 'km';
+    if (km < 400) return '약 ' + Math.round(km / 5) * 5 + 'km';
+    return '약 ' + Math.round(km / 50) * 50 + 'km';
+}
+function estimateSeconds(meters, mode, durationMin) {
+    if (durationMin) return durationMin * 60;
+    if (!meters || meters <= 0) return 0;
+    return meters / (32 / 3.6);
+}
+function groupTravelSeconds(seconds, mode) {
+    if (!seconds || seconds <= 0) return 0;
+    return Math.max(10 * 60, seconds * 1.25 + 8 * 60);
+}
+function formatApproxTime(seconds) {
+    if (!seconds || seconds <= 0) return '';
+    const min = Math.max(1, Math.ceil(seconds / 60));
+    if (min < 55) return '약 ' + Math.max(10, Math.ceil(min / 5) * 5) + '분';
+    const rounded = Math.ceil(min / 10) * 10;
+    const h = Math.floor(rounded / 60);
+    const m = rounded % 60;
+    if (!h) return '약 ' + m + '분';
+    if (!m) return '약 ' + h + '시간';
+    return '약 ' + h + '시간 ' + m + '분';
+}
+function setMapDistance(fromKey, toKey, meters, seconds, mode) {
+    const box = document.getElementById('map-distance');
+    const legEl = document.getElementById('map-distance-leg');
+    const timeEl = document.getElementById('map-distance-time');
+    const kmEl = document.getElementById('map-distance-km');
+    if (!box || !legEl || !timeEl || !kmEl) return;
+    if (!fromKey || !toKey) { box.classList.add('hidden'); return; }
+    legEl.textContent = spots[fromKey].t + ' → ' + spots[toKey].t;
+    timeEl.textContent = formatApproxTime(groupTravelSeconds(seconds, mode));
+    kmEl.textContent = formatApproxKm(meters);
+    box.classList.remove('hidden');
+}
+function pinIcon(spot) {
+    return L.divIcon({
+        className: 'custom-icon',
+        html: `<div class="map-pin-wrap"><div class="map-pin-dot" style="background:${spot.col};">${spot.i}</div><span class="map-pin-label">${spot.t}</span></div>`,
+        iconSize: [96, 52], iconAnchor: [48, 16]
+    });
+}
+function headingDeg(a, b) {
+    const lat1 = a[0] * Math.PI / 180, lat2 = b[0] * Math.PI / 180;
+    const dLng = (b[1] - a[1]) * Math.PI / 180;
+    const y = Math.sin(dLng) * Math.cos(lat2);
+    const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+    return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+}
+function headingPair(latlngs, i) {
+    const a = latlngs[Math.max(0, Math.min(i, latlngs.length - 1))];
+    let j = Math.min(Math.max(i + 1, 1), latlngs.length - 1);
+    while (j < latlngs.length - 1 && L.latLng(a).distanceTo(L.latLng(latlngs[j])) < 40) j++;
+    return [a, latlngs[j]];
+}
+const BUS_REST_DEG = 90;
+function vehicleCssTransform(mode, from, to) {
+    if (!from || !to) return 'rotate(0deg)';
+    if (L.latLng(from).distanceTo(L.latLng(to)) < 8) return null;
+    const heading = headingDeg(from, to);
+    let rot = heading - BUS_REST_DEG;
+    while (rot > 180) rot -= 360;
+    while (rot < -180) rot += 360;
+    if (Math.abs(rot) > 90) {
+        const flipRot = rot > 0 ? rot - 180 : rot + 180;
+        return `scaleX(-1) rotate(${flipRot}deg)`;
+    }
+    return `rotate(${rot}deg)`;
+}
+function moverIcon(mode, from, to) {
+    const transform = vehicleCssTransform(mode, from, to) || 'rotate(0deg)';
+    return L.divIcon({ className: 'custom-icon', html: `<div class="map-bus" data-mode="road" style="transform:${transform}">🚌</div>`, iconSize: [28, 28], iconAnchor: [14, 14] });
+}
+function applyMoverHeading(marker, from, to, mode) {
+    if (!marker || !from || !to) return;
+    const transform = vehicleCssTransform(mode, from, to);
+    if (!transform) return;
+    const bus = marker.getElement()?.querySelector('.map-bus');
+    if (bus) bus.style.transform = transform;
+}
+function clearMapLayers() {
+    if (activeBus) activeBus._aborted = true;
+    activeBus = null;
+    mapLayers.forEach(layer => {
+        if (layer._aborted !== undefined) layer._aborted = true;
+        if (currentMap) currentMap.removeLayer(layer);
+    });
+    mapLayers = [];
+}
+async function roadPath(pts) {
+    const key = pts.map(p => p.join(',')).join('|');
+    if (osrmCache[key]) return osrmCache[key];
+    try {
+        const coords = pts.map(p => `${p[1]},${p[0]}`).join(';');
+        const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`);
+        const data = await res.json();
+        if (data.code === 'Ok' && data.routes?.[0]) {
+            const path = data.routes[0].geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+            const packed = { path, meters: data.routes[0].distance, seconds: data.routes[0].duration };
+            osrmCache[key] = packed;
+            return packed;
+        }
+    } catch (e) {}
+    const meters = pathMeters(pts);
+    return { path: pts, meters, seconds: estimateSeconds(meters, 'road') };
+}
+async function resolveLegPath(leg) {
+    return roadPath([spots[leg.from].c, spots[leg.to].c]);
+}
+function lineDuration(pixelLength, routeKey, mode) {
+    const mobile = isMobileView();
+    const allView = routeKey === 'all';
+    const min = mobile ? (allView ? 1600 : 2800) : (allView ? 900 : 1400);
+    const max = mobile ? (allView ? 2800 : 5600) : (allView ? 1800 : 2800);
+    const pxPerMs = mobile ? (allView ? 0.22 : 0.12) : 0.28;
+    return Math.max(min, Math.min(max, pixelLength / pxPerMs));
+}
+function whenPathReady(polyline) {
+    return new Promise(resolve => {
+        let tries = 24;
+        const tick = () => {
+            const el = polyline.getElement();
+            if (el && typeof el.getTotalLength === 'function') resolve(el);
+            else if (tries-- > 0) requestAnimationFrame(tick);
+            else resolve(null);
+        };
+        requestAnimationFrame(tick);
+    });
+}
+function animateLine(polyline, duration, dashPattern) {
+    return new Promise(async resolve => {
+        const path = await whenPathReady(polyline);
+        if (!path) { resolve(duration); return; }
+        const length = path.getTotalLength();
+        const ms = duration || 1400;
+        path.style.transition = 'none';
+        path.style.strokeDasharray = length + ' ' + length;
+        path.style.strokeDashoffset = String(length);
+        path.getBoundingClientRect();
+        path.style.transition = `stroke-dashoffset ${ms}ms ease-in-out`;
+        path.style.strokeDashoffset = '0';
+        setTimeout(() => {
+            if (dashPattern) {
+                path.style.transition = 'none';
+                path.style.strokeDasharray = dashPattern;
+                path.style.strokeDashoffset = '0';
+            }
+            resolve(ms);
+        }, ms + 40);
+    });
+}
+function moveMarkerAlong(marker, latlngs, duration, mode) {
+    return new Promise(resolve => {
+        if (!marker || !latlngs || latlngs.length < 2) { resolve(); return; }
+        const dists = [0];
+        let total = 0;
+        for (let i = 1; i < latlngs.length; i++) {
+            total += L.latLng(latlngs[i - 1]).distanceTo(L.latLng(latlngs[i]));
+            dists.push(total);
+        }
+        if (total === 0) { resolve(); return; }
+        const [h0a, h0b] = headingPair(latlngs, 0);
+        applyMoverHeading(marker, h0a, h0b, mode);
+        const start = performance.now();
+        const ease = t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        function frame(now) {
+            if (marker._aborted) { resolve(); return; }
+            const t = Math.min(1, (now - start) / duration);
+            const target = total * ease(t);
+            let i = 1;
+            while (i < dists.length && dists[i] < target) i++;
+            const a = latlngs[i - 1];
+            const b = latlngs[Math.min(i, latlngs.length - 1)];
+            const span = (dists[i] - dists[i - 1]) || 1;
+            const f = (target - dists[i - 1]) / span;
+            marker.setLatLng([a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f]);
+            const [ha, hb] = headingPair(latlngs, i - 1);
+            applyMoverHeading(marker, ha, hb, mode);
+            if (t < 1) requestAnimationFrame(frame);
+            else resolve();
+        }
+        requestAnimationFrame(frame);
+    });
+}
+function fitPath(path, maxZoom) {
+    return new Promise(resolve => {
+        if (!currentMap || !path || path.length < 2) { resolve(); return; }
+        const b = L.latLngBounds(path);
+        let done = false;
+        const finish = () => { if (done) return; done = true; currentMap.off('moveend', finish); resolve(); };
+        currentMap.once('moveend', finish);
+        currentMap.fitBounds(b.pad(0.18), { animate: true, duration: 0.7, maxZoom: maxZoom || 12, padding: [44, 44] });
+        setTimeout(finish, 850);
+    });
+}
+async function drawMap(routeKey) {
+    if (!currentMap) return;
+    const routeData = routes[routeKey] || routes.all;
+    if (!routeData?.legs?.length) return;
+    const seq = ++mapDrawSeq;
+    clearMapLayers();
+    const hintEl = document.getElementById('map-hint');
+    if (hintEl) hintEl.textContent = mapHints[routeKey] || '';
+    setMapDistance('', '', 0, 0);
+    const zoomKeys = (routeData.zoom || []).filter(key => spots[key]);
+    if (!zoomKeys.length) return;
+    currentMap.fitBounds(L.latLngBounds(zoomKeys.map(key => spots[key].c)), { padding: [48, 48], maxZoom: routeData.maxZoom || 11 });
+    setTimeout(() => currentMap.invalidateSize(), 120);
+    const legs = routeData.legs;
+    const packed = await Promise.all(legs.map(leg => resolveLegPath(leg)));
+    if (seq !== mapDrawSeq) return;
+    const paths = packed.map(item => item.path);
+    await new Promise(r => setTimeout(r, 240));
+    if (seq !== mapDrawSeq) return;
+    paths.forEach((path) => {
+        const ghost = L.polyline(path, { color: '#94a3b8', weight: 3.5, opacity: 0.22, lineJoin: 'round', lineCap: 'round' }).addTo(currentMap);
+        mapLayers.push(ghost);
+    });
+    const placed = new Set();
+    const addPin = (key) => {
+        if (!key || placed.has(key)) return;
+        placed.add(key);
+        const spot = spots[key];
+        const marker = L.marker(spot.c, { icon: pinIcon(spot), zIndexOffset: 200 })
+            .addTo(currentMap)
+            .bindTooltip(spot.t, { direction: 'top', offset: [0, -16], className: 'custom-map-tooltip' });
+        mapLayers.push(marker);
+    };
+    const legMaxZoom = () => routeKey === 'all' ? 9 : Math.max(routeData.maxZoom || 12, 11);
+    await fitPath(paths[0], legMaxZoom());
+    if (seq !== mapDrawSeq) return;
+    addPin(legs[0].from);
+    let mover = L.marker(spots[legs[0].from].c, {
+        icon: moverIcon('road', spots[legs[0].from].c, spots[legs[0].to].c),
+        zIndexOffset: 900
+    }).addTo(currentMap);
+    mover._aborted = false;
+    activeBus = mover;
+    mapLayers.push(mover);
+    for (let i = 0; i < legs.length; i++) {
+        if (seq !== mapDrawSeq) return;
+        const leg = legs[i];
+        const path = paths[i];
+        const meters = packed[i].meters || pathMeters(path);
+        const seconds = packed[i].seconds || estimateSeconds(meters, 'road', leg.durationMin);
+        addPin(leg.from);
+        if (mover) {
+            mover.setIcon(moverIcon('road', spots[leg.from].c, spots[leg.to].c));
+            mover.setLatLng(path[0]);
+        }
+        setMapDistance(leg.from, leg.to, meters, seconds, 'road');
+        await fitPath(path, legMaxZoom());
+        if (seq !== mapDrawSeq) return;
+        const poly = L.polyline(path, { color: leg.color, weight: 5, opacity: 0.95, lineJoin: 'round', lineCap: 'round' }).addTo(currentMap);
+        if (leg.label) poly.bindTooltip('<b>' + leg.label + '</b>', { sticky: true, direction: 'center' });
+        mapLayers.push(poly);
+        const ready = await whenPathReady(poly);
+        const ms = lineDuration(ready ? ready.getTotalLength() : 400, routeKey, 'road');
+        await Promise.all([animateLine(poly, ms, null), moveMarkerAlong(mover, path, ms, 'road')]);
+        if (seq !== mapDrawSeq) return;
+        addPin(leg.to);
+        await new Promise(r => setTimeout(r, isMobileView() ? 280 : 140));
+    }
+    if (seq !== mapDrawSeq) return;
+    if (mover && currentMap.hasLayer(mover)) currentMap.removeLayer(mover);
+    mapLayers = mapLayers.filter(layer => layer !== mover);
+    if (activeBus === mover) activeBus = null;
+    currentMap.fitBounds(L.latLngBounds(zoomKeys.map(k => spots[k].c)), {
+        padding: [48, 48],
+        maxZoom: routeKey === 'all' ? 8 : Math.min(routeData.maxZoom || 11, 12),
+        animate: true
+    });
+    setTimeout(() => currentMap.invalidateSize(), 160);
+}
+function mapZoom(delta) {
+    if (!currentMap) return;
+    if (delta > 0) currentMap.zoomIn();
+    else currentMap.zoomOut();
+}
+window.mapZoom = mapZoom;
+function setMapBtn(day) {
+    document.querySelectorAll('.map-btn').forEach(btn => {
+        btn.classList.remove('bg-purple-600', 'text-white', 'border-purple-600');
+        btn.classList.add('bg-white', 'text-slate-600', 'border-slate-200');
+    });
+    const targetBtn = document.getElementById('btn-map-' + day);
+    if (targetBtn) {
+        targetBtn.classList.remove('bg-white', 'text-slate-600', 'border-slate-200');
+        targetBtn.classList.add('bg-purple-600', 'text-white', 'border-purple-600');
+    }
+}
+function ensureMapReady() {
+    if (currentMap) {
+        setTimeout(() => currentMap.invalidateSize(), 80);
+        return true;
+    }
+    if (!window.L) return false;
+    const el = document.getElementById('map');
+    if (!el) return false;
+    mapInited = true;
+    currentMap = L.map(el, { scrollWheelZoom: false, zoomControl: false }).setView([36.0, 129.2], 8);
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19, attribution: 'Tiles &copy; Esri'
+    }).addTo(currentMap);
+    setTimeout(() => currentMap.invalidateSize(), 120);
+    return true;
+}
+function initMap(initialKey) {
+    if (!ensureMapReady()) return;
+    let startKey = initialKey || getTodayDayKey() || (isMobileView() ? 'day1' : 'all');
+    filterMap(startKey);
+}
+window.filterMap = function(day) {
+    if (!ensureMapReady()) return;
+    setMapBtn(day);
+    drawMap(day);
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    setDDayLogic();
+    initEventDayUI();
+    fetchWidgets();
+    renderChecklist();
+    const memo = document.getElementById('travel-memo');
+    if (memo) {
+        const KEY = 'tm_261115_gyeongju_memo_v1';
+        memo.value = localStorage.getItem(KEY) || '';
+        memo.addEventListener('input', () => localStorage.setItem(KEY, memo.value));
+    }
+    const bootMap = () => {
+        if (!window.L) { setTimeout(bootMap, 200); return; }
+        initMap();
+    };
+    setTimeout(bootMap, 200);
+    const io = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && currentMap) {
+            currentMap.invalidateSize();
+            io.disconnect();
+        }
+    }, { threshold: 0.05 });
+    const mapSection = document.getElementById('map-section');
+    if (mapSection) io.observe(mapSection);
+    window.addEventListener('resize', () => { if (currentMap) currentMap.invalidateSize(); });
+});
+
+const TM_GUIDEBOOK_SLUG = '261115_Gyeongju';
+const TM_GUIDEBOOK_NAME = '경주 1박2일 · 가족 여행';
+const TM_CLIENT_NAME = '가족 여행';
+document.querySelectorAll('.tm-client-name').forEach((el) => { el.textContent = TM_CLIENT_NAME; });
+
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    const msg = document.getElementById('toast-msg');
+    if (!toast || !msg) return;
+    msg.innerText = message;
+    toast.classList.remove('translate-y-20', 'opacity-0');
+    setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
+}
+function openTmInquiryModal() {
+    const m = document.getElementById('tm-inquiry-modal');
+    if (!m) return;
+    const smsLink = document.getElementById('tm-sms-inquiry-link');
+    if (smsLink) {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const body = encodeURIComponent(`[${TM_GUIDEBOOK_NAME} 가이드북 보고 문의드립니다]\n• 단체/모임명: \n• 희망지역: \n• 예상인원: \n• 출발시기: `);
+        smsLink.href = `sms:010-4249-4026${isIOS ? '&' : '?'}body=${body}`;
+    }
+    m.classList.remove('hidden');
+    m.classList.add('flex');
+    trackTmInquiry('modal_open');
+}
+function closeTmInquiryModal() {
+    const m = document.getElementById('tm-inquiry-modal');
+    if (!m) return;
+    m.classList.add('hidden');
+    m.classList.remove('flex');
+}
+function trackTmInquiry(action) {
+    try {
+        if (typeof gtag === 'function') {
+            gtag('event', 'tm_guidebook_inquiry', {
+                event_category: 'lead',
+                event_label: `${TM_GUIDEBOOK_SLUG}_${action}`
+            });
+        }
+    } catch (e) {}
+}
+async function initTmViewCounter() {
+    const els = document.querySelectorAll('.tm-view-count-val');
+    if (!els.length) return;
+    const hitKey = 'tm_hit_' + TM_GUIDEBOOK_SLUG;
+    const cacheKey = 'tm_cnt_' + TM_GUIDEBOOK_SLUG;
+    const alreadyHit = sessionStorage.getItem(hitKey);
+    let count = null;
+    try {
+        const mode = alreadyHit ? 'get' : 'hit';
+        const res = await fetch(`https://abacus.jasoncameron.dev/${mode}/tourmaker.kr/${TM_GUIDEBOOK_SLUG}`);
+        if (res.ok) {
+            const data = await res.json();
+            if (typeof data.value === 'number') {
+                count = data.value;
+                sessionStorage.setItem(hitKey, '1');
+            }
+        }
+    } catch (e) {}
+    if (count === null || count === 0) {
+        try {
+            const res2 = await fetch(`https://tally.yuki.sh/hits/tourmaker/${TM_GUIDEBOOK_SLUG}.json${alreadyHit ? '?mode=read' : ''}`);
+            if (res2.ok) {
+                const data2 = await res2.json();
+                if (typeof data2.visit === 'number') {
+                    count = data2.visit;
+                    sessionStorage.setItem(hitKey, '1');
+                }
+            }
+        } catch (e) {}
+    }
+    if (count !== null && count > 0) {
+        localStorage.setItem(cacheKey, String(count));
+    } else {
+        count = parseInt(localStorage.getItem(cacheKey) || '1', 10) || 1;
+    }
+    els.forEach(el => { el.textContent = count.toLocaleString(); });
+}
+initTmViewCounter();
+
+(function initTourmakerIpNotice() {
+    if (window.__TM_IP_NOTICE__) return;
+    window.__TM_IP_NOTICE__ = true;
+    try {
+        console.log(
+            '%c⛔ TOURMAKER SMART GUIDEBOOK — 지적재산권 보호 문서',
+            'color:#fff;background:#004098;font-weight:800;padding:10px 14px;border-radius:6px;font-size:13px;'
+        );
+        console.log(
+            '%c본 문서의 HTML·CSS·JS 구조, UI/UX, 인쇄 레이아웃, ESG 대시보드, D-14 보안 잠금, 지도 동선, 문의 모달 등은 (주)투어메이커의 고유 저작물입니다.\n한국저작권위원회 저작권 등록번호 C-2026-059022 (등록일 2026.11.12)\n무단 복제·소스 도용·재배포·유사 서비스 제작 시 민·형사상 법적 조치가 진행될 수 있습니다.\n© 2026 이재명 · 투어메이커 · tourmaker.kr',
+            'color:#004098;font-weight:600;line-height:1.7;font-size:12px;'
+        );
+    } catch (e) {}
+    if (!document.querySelector('[data-tm-ip-trap="C-2026-059022"]')) {
+        const trap = document.createElement('div');
+        trap.className = 'tm-ip-fingerprint tm-sgb-core-v2026 tm-layout-signature';
+        trap.setAttribute('data-tm-ip-trap', 'C-2026-059022');
+        trap.setAttribute('data-tm-owner', 'tourmaker');
+        trap.setAttribute('data-tm-platform', 'smart-guidebook');
+        trap.setAttribute('aria-hidden', 'true');
+        trap.style.cssText = 'position:absolute;left:-99999px;top:auto;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;';
+        trap.textContent = 'TOURMAKER_IP_PROTECTED_C-2026-059022';
+        (document.body || document.documentElement).appendChild(trap);
+    }
+})();
+
+(function initSecurityShield() {
+    const isEditable = (el) => {
+        if (!el) return false;
+        const tag = (el.tagName || '').toUpperCase();
+        return tag === 'INPUT' || tag === 'TEXTAREA' || el.isContentEditable;
+    };
+    document.addEventListener('contextmenu', (e) => {
+        if (isEditable(e.target)) return;
+        e.preventDefault();
+    });
+    document.addEventListener('selectstart', (e) => {
+        if (isEditable(e.target)) return;
+        e.preventDefault();
+    });
+    document.addEventListener('dragstart', (e) => {
+        if (isEditable(e.target)) return;
+        e.preventDefault();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (isEditable(e.target)) return;
+        const key = (e.key || '').toUpperCase();
+        const mod = e.ctrlKey || e.metaKey;
+        if (
+            key === 'F12' ||
+            (mod && e.shiftKey && ['I', 'J', 'C'].includes(key)) ||
+            (mod && ['C', 'U', 'S'].includes(key))
+        ) {
+            e.preventDefault();
+            if (typeof showToast === 'function') {
+                showToast('🔒 투어메이커 저작권 보호 문서로 복사 및 소스 열람이 제한됩니다.');
+            }
+        }
+    });
+})();
+
+(function initSmartSecurityLock() {
+    const EVENT_START_DATE = (typeof EVENT_START === 'string' && EVENT_START) || '2026-11-15';
+    const VALID_PASSWORDS = [EVENT_START_DATE.slice(5, 7) + EVENT_START_DATE.slice(8, 10)]; // 1115
+    const UNLOCK_DAYS_BEFORE = 14;
+    const STORAGE_KEY = 'tm_unlocked_' + EVENT_START_DATE;
+
+    function setLockVisible(on) {
+        const modal = document.getElementById('guidebook-lock-modal');
+        if (!modal) return;
+        modal.classList.toggle('hidden', !on);
+        modal.classList.toggle('flex', on);
+        document.documentElement.style.overflow = on ? 'hidden' : '';
+        document.body.style.overflow = on ? 'hidden' : '';
+    }
+    function shouldRequirePassword() {
+        return ymdDiffDays(EVENT_START_DATE, getGuidebookToday()) > UNLOCK_DAYS_BEFORE;
+    }
+    function checkLockCondition() {
+        const unlocked = localStorage.getItem(STORAGE_KEY) === 'true';
+        if (shouldRequirePassword() && !unlocked) {
+            setLockVisible(true);
+            const input = document.getElementById('lock-password-input');
+            if (input) setTimeout(() => input.focus(), 80);
+        } else {
+            setLockVisible(false);
+        }
+    }
+    window.verifyGuidebookPassword = function () {
+        const inputEl = document.getElementById('lock-password-input');
+        const errorMsg = document.getElementById('lock-error-msg');
+        const inputVal = (inputEl?.value || '').trim();
+        if (VALID_PASSWORDS.includes(inputVal)) {
+            localStorage.setItem(STORAGE_KEY, 'true');
+            if (errorMsg) errorMsg.classList.add('hidden');
+            setLockVisible(false);
+            if (typeof showToast === 'function') showToast('🔓 인증되었습니다. 가이드북을 열람합니다.');
+        } else {
+            if (errorMsg) errorMsg.classList.remove('hidden');
+            if (inputEl) {
+                inputEl.classList.add('border-rose-500', 'shake');
+                setTimeout(() => inputEl.classList.remove('border-rose-500', 'shake'), 500);
+                inputEl.select();
+            }
+        }
+    };
+    document.getElementById('lock-password-input')?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            window.verifyGuidebookPassword();
+        }
+    });
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', checkLockCondition);
+    else checkLockCondition();
+})();
+</script>
+<div id="toast" class="fixed bottom-24 md:bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl z-[9999] transition-all duration-300 translate-y-20 opacity-0 no-print pointer-events-none text-sm font-bold flex items-center gap-2">
+    <i class="fa-solid fa-circle-check text-green-400"></i> <span id="toast-msg"></span>
+</div>
+</body>
+</html>
