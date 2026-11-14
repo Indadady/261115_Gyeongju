@@ -183,7 +183,6 @@
                 <a href="#schedule" class="px-2.5 md:px-3 py-2 text-sm font-bold text-slate-800 hover:text-[#004098] rounded-lg">세부일정</a>
                 <a href="#places" class="px-2.5 md:px-3 py-2 text-sm font-medium text-slate-600 hover:text-[#004098] rounded-lg">탐방지</a>
                 <a href="#hotel" class="px-2.5 md:px-3 py-2 text-sm font-medium text-slate-600 hover:text-[#004098] rounded-lg">호텔</a>
-                <a href="#video" class="px-2.5 md:px-3 py-2 text-sm font-medium text-slate-600 hover:text-[#004098] rounded-lg">영상</a>
                 <a href="#widgets" class="px-2.5 md:px-3 py-2 text-sm font-medium text-slate-600 hover:text-[#004098] rounded-lg">날씨</a>
                 <a href="#check" class="px-2.5 md:px-3 py-2 text-sm font-medium text-slate-600 hover:text-[#004098] rounded-lg">준비물</a>
                 <a href="#safety" class="px-2.5 md:px-3 py-2 text-sm font-bold text-red-600 rounded-lg">안전/문의</a>
@@ -482,28 +481,38 @@
     </div>
 </section>
 
-<section id="video" class="py-16 bg-slate-900 text-white border-t border-slate-800">
-    <div class="container mx-auto px-4 max-w-4xl text-center">
-        <h2 class="text-2xl md:text-3xl font-bold mb-2">경주 미리 보기</h2>
-        <p class="text-slate-400 text-sm mb-6">여행 전에 분위기만 살짝 느껴 보세요.</p>
-        <div class="relative w-full overflow-hidden rounded-2xl shadow-xl" style="padding-bottom:56.25%">
-            <iframe class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/Q7J7gY5Yp5c" title="경주 관광 영상" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
-        </div>
-        <p class="text-[11px] text-slate-500 mt-3">영상이 재생되지 않으면 유튜브에서 ‘경주 관광’으로 검색해 주세요.</p>
-    </div>
-</section>
-
 <section id="widgets" class="py-12 bg-blue-50 border-t border-slate-200">
     <div class="container mx-auto px-4 max-w-3xl">
-        <h2 class="text-xl font-bold text-slate-800 text-center mb-2">경주 · 포항 날씨</h2>
-        <p class="text-xs text-slate-500 text-center mb-4">Open-Meteo 기준 · 11월 쌀쌀한 옷차림 권장</p>
+        <h2 class="text-xl font-bold text-slate-800 text-center mb-2">경주 · 포항 날씨 &amp; 옷차림</h2>
+        <p class="text-xs text-slate-500 text-center mb-1">Open-Meteo 실시간 예보 · 행사일(11/15·16) 강조</p>
+        <p class="text-[11px] text-slate-400 text-center mb-4">출발 1주일 전부터 예보가 더 정확해집니다.</p>
         <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm mb-4">
-            <p class="text-xs font-bold text-[#004098] mb-2">경주</p>
-            <div id="weather-container" class="grid grid-cols-5 gap-2"><div class="text-center text-sm text-slate-500 col-span-5 py-4">날씨 불러오는 중…</div></div>
+            <div class="flex items-center justify-between gap-2 mb-2">
+                <p class="text-xs font-bold text-[#004098]">경주</p>
+                <p id="weather-gyeongju-updated" class="text-[10px] text-slate-400"></p>
+            </div>
+            <div id="weather-container" class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                <div class="text-center text-sm text-slate-400 py-4 w-full">예보 불러오는 중…</div>
+            </div>
         </div>
-        <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
-            <p class="text-xs font-bold text-sky-700 mb-2">포항</p>
-            <div id="weather-pohang" class="grid grid-cols-5 gap-2"><div class="text-center text-sm text-slate-500 col-span-5 py-4">날씨 불러오는 중…</div></div>
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm mb-4">
+            <div class="flex items-center justify-between gap-2 mb-2">
+                <p class="text-xs font-bold text-sky-700">포항</p>
+                <p id="weather-pohang-updated" class="text-[10px] text-slate-400"></p>
+            </div>
+            <div id="weather-pohang" class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                <div class="text-center text-sm text-slate-400 py-4 w-full">예보 불러오는 중…</div>
+            </div>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+                <p class="text-xs font-bold text-slate-700 mb-1"><i class="fa-solid fa-shirt text-[#004098] mr-1"></i>기본 옷차림</p>
+                <p class="text-sm text-slate-600 leading-relaxed">11월 경주·포항은 낮에도 쌀쌀합니다. 긴팔·가벼운 패딩을 기본으로 하세요.</p>
+            </div>
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+                <p class="text-xs font-bold text-slate-700 mb-1"><i class="fa-solid fa-moon text-indigo-500 mr-1"></i>야경·수영장</p>
+                <p class="text-sm text-slate-600 leading-relaxed">밤공기·물놀이 뒤 체온 변화가 큽니다. 여분 겉옷·양말을 가방에 넣어 두세요.</p>
+            </div>
         </div>
     </div>
 </section>
@@ -852,30 +861,138 @@ function setDDayLogic() {
     }
     badge.classList.remove('hidden');
 }
-async function renderWeather(elId, lat, lon) {
-    const container = document.getElementById(elId);
-    if (!container) return;
+const WEATHER_CACHE_KEY = 'tm_261115_gyeongju_weather_v2';
+const WEATHER_CACHE_TTL_MS = 3 * 60 * 60 * 1000;
+const WEATHER_TRIP_DAYS = new Set(['2026-11-15', '2026-11-16']);
+const WEATHER_WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
+
+function weatherIconClass(code) {
+    if (code === 0) return 'fa-sun text-orange-400';
+    if (code <= 3) return 'fa-cloud-sun text-yellow-500';
+    if (code === 45 || code === 48) return 'fa-smog text-slate-400';
+    if (code <= 67) return 'fa-cloud-rain text-sky-500';
+    if (code <= 77) return 'fa-snowflake text-sky-300';
+    return 'fa-cloud-showers-heavy text-blue-600';
+}
+
+function readWeatherCache() {
     try {
-        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Asia%2FSeoul&forecast_days=5`);
-        const weatherData = await weatherRes.json();
-        const weatherMap = {0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌧️',53:'🌧️',55:'🌧️',61:'☔',63:'☔',65:'☔',71:'❄️',73:'❄️',75:'❄️',95:'⛈️'};
-        const codes = weatherData.daily.weather_code || [];
-        container.innerHTML = '';
-        for (let i = 0; i < Math.min(5, (weatherData.daily.time || []).length); i++) {
-            const dateStr = weatherData.daily.time[i].substring(5).replace('-', '/');
-            const icon = weatherMap[codes[i]] || '🌥️';
-            const tMax = Math.round(weatherData.daily.temperature_2m_max[i]);
-            const tMin = Math.round(weatherData.daily.temperature_2m_min[i]);
-            container.innerHTML += `<div class="bg-slate-50 border border-slate-100 rounded-xl p-2 text-center"><div class="text-[10px] text-slate-500 font-bold mb-1">${dateStr}</div><div class="text-xl mb-1">${icon}</div><div class="text-[10px] font-bold"><span class="text-red-500">${tMax}°</span> <span class="text-blue-500">${tMin}°</span></div></div>`;
-        }
+        const raw = sessionStorage.getItem(WEATHER_CACHE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed || !parsed.at || !parsed.gyeongju || !parsed.pohang) return null;
+        if (Date.now() - parsed.at > WEATHER_CACHE_TTL_MS) return null;
+        return parsed;
     } catch (e) {
-        container.innerHTML = '<div class="text-xs text-red-500 w-full text-center col-span-5">날씨 정보를 불러오지 못했습니다.</div>';
+        return null;
     }
 }
-function fetchWidgets() {
-    renderWeather('weather-container', 35.8562, 129.2247);
-    renderWeather('weather-pohang', 36.0190, 129.3435);
+
+function writeWeatherCache(payload) {
+    try {
+        sessionStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify(payload));
+    } catch (e) { /* ignore quota */ }
 }
+
+async function fetchJsonWithTimeout(url, ms) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), ms);
+    try {
+        const res = await fetch(url, { signal: controller.signal, cache: 'no-store' });
+        if (!res.ok) throw new Error('weather http ' + res.status);
+        return await res.json();
+    } finally {
+        clearTimeout(timer);
+    }
+}
+
+function normalizeWeatherBundle(data) {
+    if (Array.isArray(data) && data.length >= 2) {
+        return { gyeongju: data[0], pohang: data[1] };
+    }
+    if (data && data.daily) {
+        return { gyeongju: data, pohang: data };
+    }
+    throw new Error('unexpected weather payload');
+}
+
+async function loadWeatherBundle(forceRefresh) {
+    if (!forceRefresh) {
+        const cached = readWeatherCache();
+        if (cached) return cached;
+    }
+    const url = 'https://api.open-meteo.com/v1/forecast'
+        + '?latitude=35.8562,36.0190'
+        + '&longitude=129.2247,129.3435'
+        + '&daily=weather_code,temperature_2m_max,temperature_2m_min'
+        + '&timezone=Asia%2FSeoul&forecast_days=7';
+    let data;
+    try {
+        data = await fetchJsonWithTimeout(url, 7000);
+    } catch (e) {
+        data = await fetchJsonWithTimeout(url, 9000);
+    }
+    const bundle = normalizeWeatherBundle(data);
+    const payload = { at: Date.now(), gyeongju: bundle.gyeongju, pohang: bundle.pohang };
+    writeWeatherCache(payload);
+    return payload;
+}
+
+function paintWeatherBox(elId, updatedId, daily, fetchedAt) {
+    const container = document.getElementById(elId);
+    const updatedEl = document.getElementById(updatedId);
+    if (!container || !daily) return;
+    const codes = daily.weather_code || daily.weathercode || [];
+    const times = daily.time || [];
+    const maxes = daily.temperature_2m_max || [];
+    const mins = daily.temperature_2m_min || [];
+    let html = '';
+    for (let i = 0; i < times.length; i++) {
+        const ymd = times[i];
+        const d = new Date(ymd + 'T12:00:00+09:00');
+        const isTrip = WEATHER_TRIP_DAYS.has(ymd);
+        const label = `${d.getMonth() + 1}/${d.getDate()}(${WEATHER_WEEKDAYS[d.getDay()]})`;
+        html += `<div class="flex flex-col items-center p-2.5 rounded-xl border min-w-[72px] shrink-0 ${isTrip ? 'bg-blue-50 border-blue-300 ring-1 ring-blue-200' : 'bg-slate-50 border-slate-100'}">`
+            + (isTrip ? '<span class="text-[8px] font-black text-[#004098] mb-0.5">여행일</span>' : '<span class="text-[8px] text-transparent mb-0.5">.</span>')
+            + `<span class="text-[10px] text-slate-500 font-bold mb-1">${label}</span>`
+            + `<i class="fa-solid ${weatherIconClass(codes[i])} text-lg mb-1"></i>`
+            + `<span class="text-[10px] font-bold"><span class="text-red-500">${Math.round(maxes[i])}°</span><span class="text-slate-300 mx-0.5">/</span><span class="text-blue-500">${Math.round(mins[i])}°</span></span>`
+            + '</div>';
+    }
+    container.innerHTML = html || '<p class="text-xs text-slate-400 p-2">예보 데이터가 없습니다.</p>';
+    if (updatedEl && fetchedAt) {
+        const t = new Date(fetchedAt);
+        updatedEl.textContent = `업데이트 ${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
+    }
+}
+
+async function fetchWidgets() {
+    const gyeongjuBox = document.getElementById('weather-container');
+    const pohangBox = document.getElementById('weather-pohang');
+    const cached = readWeatherCache();
+    if (cached) {
+        paintWeatherBox('weather-container', 'weather-gyeongju-updated', cached.gyeongju.daily, cached.at);
+        paintWeatherBox('weather-pohang', 'weather-pohang-updated', cached.pohang.daily, cached.at);
+    }
+    try {
+        const pending = window.__tmWeatherWarm;
+        window.__tmWeatherWarm = null;
+        let fresh = pending ? await pending : null;
+        if (!fresh) fresh = await loadWeatherBundle(false);
+        if (fresh && fresh.gyeongju && fresh.pohang) {
+            paintWeatherBox('weather-container', 'weather-gyeongju-updated', fresh.gyeongju.daily, fresh.at);
+            paintWeatherBox('weather-pohang', 'weather-pohang-updated', fresh.pohang.daily, fresh.at);
+        } else if (!cached) {
+            throw new Error('no weather');
+        }
+    } catch (e) {
+        if (!cached) {
+            if (gyeongjuBox) gyeongjuBox.innerHTML = '<p class="text-xs text-red-500 p-2 w-full text-center">날씨를 불러오지 못했습니다. 잠시 후 다시 열어 주세요.</p>';
+            if (pohangBox) pohangBox.innerHTML = '<p class="text-xs text-red-500 p-2 w-full text-center">날씨를 불러오지 못했습니다. 잠시 후 다시 열어 주세요.</p>';
+        }
+    }
+}
+window.__tmWeatherWarm = loadWeatherBundle(false).catch(() => null);
 const CHECK_KEY = 'tm_261115_gyeongju_chk_v1';
 const CHECK_ITEMS = [
     '신분증 · 숙소 예약 확인',
